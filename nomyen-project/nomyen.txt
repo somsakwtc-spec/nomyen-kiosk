@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="th" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nong Nom Yen - ผู้ช่วยอาชีวะอัจฉริยะ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Sarabun', 'sans-serif'],
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 3s infinite',
+                        'marquee': 'marquee 25s linear infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'shake': 'shake 0.5s infinite',
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(100%)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        shake: {
+                            '0%': { transform: 'translate(1px, 1px) rotate(0deg)' },
+                            '10%': { transform: 'translate(-1px, -2px) rotate(-1deg)' },
+                            '20%': { transform: 'translate(-3px, 0px) rotate(1deg)' },
+                            '30%': { transform: 'translate(3px, 2px) rotate(0deg)' },
+                            '40%': { transform: 'translate(1px, -1px) rotate(1deg)' },
+                            '50%': { transform: 'translate(-1px, 2px) rotate(-1deg)' },
+                            '60%': { transform: 'translate(-3px, 1px) rotate(0deg)' },
+                            '70%': { transform: 'translate(3px, 1px) rotate(-1deg)' },
+                            '80%': { transform: 'translate(-1px, -1px) rotate(1deg)' },
+                            '90%': { transform: 'translate(1px, 2px) rotate(0deg)' },
+                            '100%': { transform: 'translate(1px, -2px) rotate(-1deg)' }
+                        }
+                    },
+                    colors: {
+                        dark: { bg: '#111827', surface: '#1f2937' },
+                        light: { bg: '#f3f4f6', surface: '#ffffff' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            /* Allow selection in inputs but disable global selection for kiosk feel */
+            -webkit-user-select: none; user-select: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Fix for input selection */
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+        
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; }
+
+        /* Visualizer Bars */
+        .bar { width: 4px; background: #EC4899; animation: equalize 0.5s infinite; display: none; }
+        .speaking .bar { display: block; }
+        .bar:nth-child(1) { animation-delay: -0.4s; height: 10px; }
+        .bar:nth-child(2) { animation-delay: -0.2s; height: 15px; }
+        .bar:nth-child(3) { animation-delay: 0s; height: 20px; }
+        @keyframes equalize { 0%, 100% { height: 10px; } 50% { height: 25px; } }
+
+        /* Scan Line for Camera */
+        .scan-line { position: absolute; width: 100%; height: 4px; background: #10B981; top: 0; left: 0; opacity: 0; z-index: 10; box-shadow: 0 0 10px #10B981; pointer-events: none; }
+        .scanning .scan-line { opacity: 0.8; animation: scanMove 1.5s linear infinite; }
+        @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
+
+        /* Screensaver */
+        #screensaver { opacity: 0; pointer-events: none; transition: opacity 0.2s ease-out; } 
+        #screensaver.active { opacity: 1; pointer-events: auto; transition: opacity 0.5s ease-in; }
+        
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+        .floating { animation: float 6s ease-in-out infinite; }
+
+        /* Markdown Styles for Gemini Responses */
+        .prose h1, .prose h2, .prose h3 { margin-top: 1em; margin-bottom: 0.5em; font-weight: bold; }
+        .prose ul { list-style-type: disc; padding-left: 1.5em; margin: 0.5em 0; }
+        .prose p { margin-bottom: 0.5em; }
+        .prose strong { color: #ec4899; }
+
+        /* Image Viewer Styles */
+        #image-viewer { touch-action: none; }
+        #image-viewer img { cursor: grab; user-select: none; }
+        #image-viewer img:active { cursor: grabbing; }
+    </style>
+</head>
+<body class="overflow-hidden h-screen flex flex-col bg-light-bg text-gray-800 dark:bg-dark-bg dark:text-white transition-colors duration-300" onclick="if(window.resetIdleTimer) window.resetIdleTimer()" onmousemove="if(window.resetIdleTimer) window.resetIdleTimer()">
+    
+    <canvas id="motion-canvas" style="display: none;"></canvas>
+
+    <!-- Screensaver Overlay -->
+    <div id="screensaver" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center text-center">
+        <div class="floating mb-8">
+            <img src="https://lh6.google.com/u/0/d/11Al78G5_vSY2QjULzHQrRUQ2E9AKVYRJ" class="w-32 h-32 rounded-full object-cover mx-auto shadow-[0_0_50px_rgba(236,72,153,0.3)] border-4 border-gray-700 opacity-80 grayscale">
+            <h1 class="text-4xl font-bold text-gray-400 tracking-widest font-mono mt-4">SLEEP MODE</h1>
+        </div>
+        
+        <!-- CCTV Camera View in Screensaver -->
+        <div class="relative w-80 h-60 bg-gray-900 rounded-xl overflow-hidden border-2 border-green-500/30 shadow-[0_0_30px_rgba(16,185,129,0.2)] mb-8">
+            <video id="screensaver-video" class="w-full h-full object-cover opacity-60" muted playsinline></video>
+            
+            <!-- CCTV UI Overlay -->
+            <div class="absolute top-2 left-3 flex items-center gap-2">
+                <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                <span class="text-[10px] font-mono text-red-500 font-bold">REC</span>
+            </div>
+            <div class="absolute top-2 right-3 text-[10px] font-mono text-green-500 font-bold">CAM-01</div>
+            <div class="absolute bottom-2 left-3 text-[10px] font-mono text-green-500/70" id="cctv-clock">00:00:00</div>
+            
+            <!-- Scanline effect -->
+            <div class="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] pointer-events-none"></div>
+            <div class="absolute inset-0 border-[20px] border-transparent border-t-green-500/10 border-b-green-500/10 opacity-20 pointer-events-none"></div>
+            
+            <!-- Motion Text (Hidden by default, used only for logic check) -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span id="motion-status-text" class="text-green-400 font-mono text-xs tracking-widest bg-black/50 px-2 py-1 rounded hidden">MOTION DETECTED</span>
+            </div>
+        </div>
+
+        <p class="text-xl text-gray-500 animate-pulse font-light">ระบบกำลังตรวจจับความเคลื่อนไหว...</p>
+        <div class="absolute bottom-10 text-gray-600 font-mono text-xl" id="screensaver-clock">00:00</div>
+    </div>
+
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="fixed inset-0 bg-gray-900 z-50 flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="relative mb-8">
+            <div class="absolute inset-0 bg-pink-500 blur-3xl opacity-20 rounded-full"></div>
+            <img src="https://lh6.google.com/u/0/d/11Al78G5_vSY2QjULzHQrRUQ2E9AKVYRJ" class="w-48 h-48 rounded-full object-cover relative z-10 border-4 border-gray-700 shadow-2xl animate-bounce-slow">
+        </div>
+        <h1 class="text-5xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Nong Nom Yen</h1>
+        <p class="mt-3 text-xl text-gray-400 font-light">ผู้ช่วยสถานศึกษาอัจฉริยะ (School Edition)</p>
+        
+        <button id="start-btn" class="mt-12 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-4 px-12 rounded-full text-lg transition-all backdrop-blur-md flex items-center gap-3 group hover:border-pink-500/50 hover:shadow-[0_0_20px_rgba(236,72,153,0.3)]">
+            <span>แตะเพื่อเริ่มต้น</span>
+            <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+        </button>
+    </div>
+
+    <!-- Dynamic Background -->
+    <div class="fixed inset-0 z-[-1] bg-gray-100 dark:bg-gray-900 transition-colors duration-500">
+        <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-pink-200/30 dark:from-pink-900/20 to-transparent"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Main UI -->
+    <div id="main-container" class="flex-grow flex flex-col p-4 md:p-6 gap-4 opacity-0 transition-opacity duration-1000 h-full relative z-0">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-center bg-white/80 dark:bg-gray-800/40 backdrop-blur-xl p-4 rounded-2xl border border-gray-200 dark:border-white/5 shadow-lg transition-colors duration-300 relative z-30">
+            <div class="flex items-center gap-4">
+                <div class="relative group cursor-pointer" onclick="handleSecretTrigger()">
+                    <img src="https://lh6.google.com/u/0/d/11Al78G5_vSY2QjULzHQrRUQ2E9AKVYRJ" class="h-14 w-14 rounded-full border-2 border-pink-500/50 p-0.5 object-cover bg-white dark:bg-gray-800 transition-transform active:scale-90">
+                    <div id="visualizer" class="absolute -bottom-1 -right-1 flex gap-0.5 items-end h-5 p-1 bg-black/80 rounded-md silent">
+                        <div class="bar bg-green-400"></div><div class="bar bg-green-400"></div><div class="bar bg-green-400"></div>
+                    </div>
+                </div>
+                <div>
+                    <h1 id="school-name-display" class="text-2xl font-bold leading-none bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600 dark:from-white dark:to-gray-400">Nong Nom Yen</h1>
+                    <p class="text-xs text-gray-500 dark:text-pink-400 font-medium tracking-wide mt-1">INTELLIGENT SCHOOL KIOSK</p>
+                </div>
+            </div>
+
+            <div class="hidden lg:flex relative w-96 mx-4 group">
+                <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-pink-500 transition-colors"></i>
+                <input type="text" id="main-search" oninput="handleSearch(this.value)" placeholder="ค้นหาประกาศ ชื่อครู หรือแผนก..." 
+                    class="w-full bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-full py-2.5 pl-12 pr-4 text-sm focus:outline-none focus:border-pink-500 dark:text-white transition-all shadow-inner focus:shadow-pink-500/20">
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden md:block mr-2">
+                    <div id="clock" class="text-2xl font-bold font-mono leading-none text-gray-700 dark:text-white">--:--</div>
+                    <div id="weather-display" class="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-end gap-1 mt-1">
+                        <i class="ph-fill ph-spinner animate-spin"></i> <span>Loading...</span>
+                    </div>
+                </div>
+                
+                <div class="h-10 w-px bg-gray-300 dark:bg-white/10 mx-1 hidden xl:block"></div>
+
+                <!-- Notification Bell -->
+                <div class="relative">
+                    <button onclick="toggleNotifications()" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors border border-gray-200 dark:border-white/5 shadow-sm relative">
+                        <i class="ph-fill ph-bell text-gray-600 dark:text-gray-300 text-xl"></i>
+                        <span id="notif-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white dark:border-gray-900 transform scale-0 transition-transform">0</span>
+                    </button>
+                    <!-- Notification Menu Dropdown -->
+                    <div id="notif-menu" class="absolute top-12 right-0 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-white/10 overflow-hidden transform origin-top-right scale-0 opacity-0 transition-all duration-200 z-50">
+                        <div class="p-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 flex justify-between items-center">
+                            <h3 class="font-bold text-sm text-gray-700 dark:text-white">การแจ้งเตือน</h3>
+                            <button onclick="clearNotifications()" class="text-xs text-pink-500 hover:text-pink-600 font-medium">ล้างทั้งหมด</button>
+                        </div>
+                        <div id="notif-list" class="max-h-64 overflow-y-auto custom-scrollbar p-1">
+                            <div class="text-center py-8 text-gray-400 text-sm">ไม่มีการแจ้งเตือนใหม่</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors border border-gray-200 dark:border-white/5 shadow-sm">
+                    <i id="theme-icon" class="ph-fill ph-moon text-purple-500 dark:text-yellow-400 text-xl"></i>
+                </button>
+                <button id="sound-btn" onclick="toggleSound()" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors border border-gray-200 dark:border-white/5 shadow-sm">
+                    <i class="ph-fill ph-speaker-high text-green-500 dark:text-green-400 text-xl"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <main class="flex-grow flex gap-4 min-h-0 relative z-0">
+            <nav class="w-20 md:w-24 flex-shrink-0 bg-white/80 dark:bg-gray-800/40 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/5 flex flex-col items-center py-6 gap-3 shadow-xl transition-colors duration-300">
+                <button onclick="showAllApps()" class="flex flex-col items-center justify-center gap-1 p-2 w-16 h-16 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 hover:scale-105 transition-all group mb-2 shadow-lg shadow-pink-500/30">
+                    <i class="ph-fill ph-squares-four text-2xl text-white"></i>
+                    <span class="text-[9px] font-bold text-white">บริการเสริม</span>
+                </button>
+                <div class="w-10 h-px bg-gray-300 dark:bg-white/10 mb-1"></div>
+                <button id="nav-news" onclick="renderContent('news')" class="nav-item active flex flex-col items-center justify-center gap-1 p-2 w-16 h-16 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all group relative">
+                    <i class="ph-fill ph-newspaper text-2xl text-blue-500 dark:text-blue-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[10px] text-gray-500 dark:text-gray-400">ข่าว</span>
+                </button>
+                <button id="nav-events" onclick="renderContent('events')" class="nav-item flex flex-col items-center justify-center gap-1 p-2 w-16 h-16 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all group">
+                    <i class="ph-fill ph-calendar-check text-2xl text-green-500 dark:text-green-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[10px] text-gray-500 dark:text-gray-400">กิจกรรม</span>
+                </button>
+                <button id="nav-career" onclick="renderContent('career')" class="nav-item flex flex-col items-center justify-center gap-1 p-2 w-16 h-16 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all group">
+                    <i class="ph-fill ph-briefcase text-2xl text-purple-500 dark:text-purple-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[10px] text-gray-500 dark:text-gray-400">อาชีพ</span>
+                </button>
+            </nav>
+
+            <div class="flex-grow flex flex-col gap-4 min-w-0">
+                <div class="flex flex-wrap justify-between items-center bg-white/60 dark:bg-gray-800/30 p-2 rounded-xl border border-gray-200 dark:border-white/5 transition-colors duration-300 gap-2">
+                    <div class="flex gap-2" id="category-tabs"></div>
+                    <div class="flex items-center gap-2 bg-gray-100 dark:bg-gray-900/50 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-white/10 hover:border-pink-500/50 transition-colors ml-auto">
+                        <i class="ph-fill ph-funnel text-gray-500 dark:text-gray-400"></i>
+                        <select id="audience-selector" onchange="setAudience(this.value)" class="bg-transparent text-sm text-gray-700 dark:text-white focus:outline-none cursor-pointer border-none p-0 pr-2">
+                             <option value="general">ประกาศทั่วไป</option>
+                             <option value="student">สำหรับนักเรียน</option>
+                             <option value="parent">สำหรับผู้ปกครอง</option>
+                             <option value="staff">บุคลากร/ครู</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="content-display" class="flex-grow bg-white/40 dark:bg-gray-900/30 rounded-2xl overflow-y-auto custom-scrollbar p-4 relative border border-gray-200 dark:border-white/5 transition-colors duration-300 shadow-inner"></div>
+            </div>
+        </main>
+
+        <!-- Marquee News -->
+        <div class="bg-pink-50 dark:bg-pink-900/20 border-t border-pink-500/20 h-12 flex items-center overflow-hidden relative z-10 transition-colors duration-300">
+            <div class="bg-pink-500 dark:bg-pink-600 px-6 h-full flex items-center text-base font-bold text-white z-20 shadow-lg uppercase tracking-widest whitespace-nowrap">
+                <i class="ph-bold ph-megaphone mr-3 text-xl"></i> Breaking News
+            </div>
+            <div class="marquee whitespace-nowrap overflow-hidden w-full">
+                <span id="marquee-text" class="inline-block pl-[100%] animate-marquee text-xl text-pink-600 dark:text-pink-200 py-2 font-medium">
+                    ยินดีต้อนรับสู่ระบบสารสนเทศเพื่อการศึกษา Nong Nom Yen... ติดต่อฝ่ายวิชาการโทร 02-xxx-xxxx... กำหนดการสอบกลางภาควันที่...
+                </span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="flex-shrink-0 bg-white/80 dark:bg-gray-800/60 backdrop-blur-md p-3 rounded-2xl border border-gray-200 dark:border-white/5 flex justify-between items-center shadow-2xl relative z-20 mt-2 transition-colors duration-300">
+             <div class="flex items-center gap-4 pl-2">
+                 <div id="camera-widget" class="flex items-center gap-3 pl-1 pr-3 py-1.5 bg-gray-100 dark:bg-black/30 rounded-full border border-gray-200 dark:border-white/5 transition-all duration-300">
+                     <div id="camera-frame" class="w-10 h-10 rounded-full overflow-hidden relative bg-black border border-gray-300 dark:border-gray-700">
+                         <div class="scan-line"></div>
+                         <video id="video-feed" class="absolute inset-0 w-full h-full object-cover hidden" muted playsinline></video>
+                         <div class="absolute inset-0 flex items-center justify-center"><i class="ph-fill ph-camera text-gray-400 dark:text-gray-600"></i></div>
+                     </div>
+                     <div class="flex flex-col">
+                         <span class="text-[9px] text-gray-500 font-bold tracking-wider">AI VISION</span>
+                         <span id="camera-status" class="text-[10px] font-medium text-gray-400">OFFLINE</span>
+                     </div>
+                     <div class="h-6 w-px bg-gray-300 dark:bg-white/10 mx-1"></div>
+                     <button onclick="toggleCamera()" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-white/10 hover:bg-gray-300 dark:hover:bg-white/20 text-gray-700 dark:text-white flex items-center justify-center transition-colors"><i class="ph-bold ph-power"></i></button>
+                     <button onclick="analyzeUserBehavior()" class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white flex items-center justify-center transition-colors shadow-md"><i class="ph-bold ph-brain"></i></button>
+                     <button id="auto-greet-btn" onclick="toggleAutoGreet()" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-white/5 text-gray-500 hover:bg-gray-300 dark:hover:bg-white/20 hover:text-gray-800 dark:hover:text-white flex items-center justify-center transition-colors relative">
+                        <i class="ph-bold ph-hand-waving"></i>
+                        <span id="greet-status-dot" class="absolute top-1 right-1 w-2 h-2 bg-green-500 rounded-full hidden border border-white dark:border-gray-800"></span>
+                     </button>
+                 </div>
+             </div>
+             
+             <!-- Center Action Buttons (Voice & Type) -->
+             <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-4">
+                 <button onclick="startVoiceCommand()" class="h-20 w-20 rounded-full bg-gradient-to-br from-gray-100 to-gray-300 dark:from-gray-700 dark:to-gray-800 hover:from-pink-500 hover:to-purple-600 dark:hover:from-pink-600 dark:hover:to-purple-600 flex items-center justify-center border-[6px] border-gray-200 dark:border-gray-900 shadow-2xl transition-all transform hover:scale-110 active:scale-95 group relative overflow-hidden z-10">
+                     <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                     <i class="ph-fill ph-microphone text-3xl text-gray-600 dark:text-gray-300 group-hover:text-white relative z-10"></i>
+                 </button>
+                 
+                 <!-- Keyboard Button -->
+                 <button onclick="showTypingInput()" class="w-12 h-12 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl hover:border-pink-500 hover:text-pink-500 text-gray-500 dark:text-gray-400 flex items-center justify-center transition-all transform hover:scale-110 active:scale-95 group" title="พิมพ์คำสั่ง">
+                    <i class="ph-bold ph-keyboard text-xl group-hover:animate-pulse"></i>
+                 </button>
+             </div>
+
+             <button onclick="showCareerSuggestion()" class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white pr-6 pl-4 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 shadow-lg transform hover:-translate-y-1 transition-all mr-2">
+                 <div class="bg-white/20 p-1.5 rounded-full"><i class="ph-bold ph-sparkle text-white"></i></div>
+                 <span class="hidden md:inline">AI แนะนำอาชีพ</span>
+             </button>
+        </footer>
+    </div>
+
+    <!-- Global Modal -->
+    <div id="modal" class="fixed inset-0 z-[70] flex items-center justify-center invisible opacity-0 transition-all duration-300 p-4">
+        <div id="modal-backdrop" class="absolute inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        <div id="modal-content" class="relative bg-white dark:bg-gray-800 w-full max-w-4xl rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 flex flex-col transform scale-95 transition-all max-h-[85vh] overflow-hidden"></div>
+    </div>
+
+    <!-- External Link / Action Confirmation Modal (Updated) -->
+    <div id="confirm-modal" class="fixed inset-0 z-[80] flex items-center justify-center invisible opacity-0 transition-all duration-300 p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeConfirmModal()"></div>
+        <div class="relative bg-white dark:bg-gray-900 w-full max-w-sm rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 p-6 transform scale-95 transition-all flex flex-col items-center text-center">
+            <div id="confirm-icon-bg" class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400 transition-colors">
+                <i id="confirm-icon" class="ph-duotone ph-arrow-square-out text-3xl"></i>
+            </div>
+            <h3 id="confirm-title" class="text-xl font-bold text-gray-800 dark:text-white mb-2">ยืนยันการทำรายการ?</h3>
+            <p id="confirm-message" class="text-sm text-gray-500 dark:text-gray-400 mb-6">รายละเอียดการยืนยัน</p>
+            <div class="flex gap-3 w-full">
+                <button onclick="closeConfirmModal()" class="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">ยกเลิก</button>
+                <button id="confirm-action-btn" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg transition-colors">ยืนยัน</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXOtX2LfTqfkrH7P21-XGf8bGhz6ICsi37_q8Hs0ePMUTsDB2tZsjemfIXuzvp1uWUMw/exec'; 
+        const MOU_SYSTEM_URL = 'https://script.google.com/macros/s/AKfycbx2ic7cYzbW6oa1oS3kCo-2WudpLnU8lkAjbMMvRs4/dev';
+        const apiKey = "AIzaSyC3Fb5MMv1RnVMCq6B9SqAydTzkbe16HaM"; 
+        const geminiModel = "gemini-2.5-flash-preview-09-2025";
+        const geminiTTSModel = "gemini-2.5-flash-preview-tts";
+
+        let state = {
+            schoolName: "Nong Nom Yen",
+            currentAudience: 'general',
+            currentCategory: 'news',
+            isSoundOn: true,
+            isCameraOn: false,
+            cameraStream: null,
+            isAutoGreet: false,
+            lastGreetTime: 0,
+            previousFrame: null,
+            allContent: [],
+            currentAudio: null,
+            isAnalyzing: false,
+            idleTime: 0,
+            idleTimeoutConfig: 60,
+            notifications: [],
+            unreadCount: 0,
+            secretClickCount: 0,
+            secretClickTimer: null,
+            systemVoices: [],
+            ttsFailed: false,
+            tempFiles: [],
+            // เพิ่มตัวแปรสำหรับเก็บข้อมูลติดต่อ
+            contactInfo: {
+                phone: "037-251-533",
+                // อัปเดตลิงก์ใหม่ตามที่ระบุ
+                facebookUrl: "https://www.facebook.com/people/%E0%B8%A7%E0%B8%B4%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%A5%E0%B8%B1%E0%B8%A2%E0%B9%80%E0%B8%97%E0%B8%84%E0%B8%99%E0%B8%B4%E0%B8%84%E0%B8%A7%E0%B8%B1%E0%B8%87%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B9%80%E0%B8%A2%E0%B9%87%E0%B8%99/61560850153252/?locale=th_TH",
+                facebookName: "วิทยาลัยเทคนิควังน้ำเย็น",
+                email: "saraban@wangcc.ac.th",
+                address: "333 ม.1 ต.วังน้ำเย็น อ.วังน้ำเย็น จ.สระแก้ว"
+            },
+            speechInterval: null // ตัวแปรสำหรับแก้บั๊กเสียงหาย
+        };
+
+        const dom = {
+            content: document.getElementById('content-display'),
+            modal: document.getElementById('modal'),
+            modalContent: document.getElementById('modal-content'),
+            visualizer: document.getElementById('visualizer'),
+            weather: document.getElementById('weather-display'),
+            video: document.getElementById('video-feed'),
+            notifBadge: document.getElementById('notif-badge'),
+            notifList: document.getElementById('notif-list'),
+            notifMenu: document.getElementById('notif-menu'),
+            screensaverVideo: document.getElementById('screensaver-video'),
+            screensaver: document.getElementById('screensaver'),
+            schoolNameDisplay: document.getElementById('school-name-display')
+        };
+
+        // --- Persistence Logic ---
+        function loadDataFromStorage() {
+            try {
+                const storedNews = localStorage.getItem('customNews');
+                if (storedNews) state.allContent = JSON.parse(storedNews);
+                
+                const storedSettings = localStorage.getItem('systemSettings');
+                if (storedSettings) {
+                    const settings = JSON.parse(storedSettings);
+                    state.schoolName = settings.schoolName || state.schoolName;
+                    state.idleTimeoutConfig = settings.idleTime || 60;
+                    state.isAutoGreet = settings.autoGreet || false;
+                    // โหลดข้อมูลติดต่อที่บันทึกไว้
+                    if (settings.contactInfo) state.contactInfo = settings.contactInfo;
+
+                    dom.schoolNameDisplay.innerText = state.schoolName;
+                    if(state.isAutoGreet) {
+                         const btn = document.getElementById('auto-greet-btn');
+                         const dot = document.getElementById('greet-status-dot');
+                         btn.classList.add('text-green-500', 'bg-green-100', 'dark:text-green-400', 'dark:bg-green-900/20');
+                         dot.classList.remove('hidden');
+                    }
+                }
+            } catch(e) { console.error("Load Storage Error", e); }
+        }
+
+        function saveDataToStorage() {
+            try {
+                // Save only custom added news items to avoid overwriting mocks if we had them mixed
+                // For this demo, we save everything in allContent
+                localStorage.setItem('customNews', JSON.stringify(state.allContent));
+                localStorage.setItem('systemSettings', JSON.stringify({
+                    schoolName: state.schoolName,
+                    idleTime: state.idleTimeoutConfig,
+                    autoGreet: state.isAutoGreet,
+                    contactInfo: state.contactInfo // บันทึกข้อมูลติดต่อ
+                }));
+            } catch(e) { console.error("Save Storage Error", e); }
+        }
+        // -------------------------
+
+        window.onload = () => {
+            loadDataFromStorage(); // Load persisted data
+            fetchWeather();
+            if ('speechSynthesis' in window) {
+                state.systemVoices = window.speechSynthesis.getVoices();
+                window.speechSynthesis.onvoiceschanged = () => {
+                    state.systemVoices = window.speechSynthesis.getVoices();
+                };
+            }
+
+            if (localStorage.getItem('theme') === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+                document.getElementById('theme-icon').classList.replace('ph-moon', 'ph-sun');
+                document.getElementById('theme-icon').classList.replace('text-yellow-400', 'text-orange-500');
+            } else {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+            }
+
+            document.getElementById('start-btn').addEventListener('click', () => {
+                document.getElementById('splash-screen').style.opacity = '0';
+                document.getElementById('main-container').classList.remove('opacity-0');
+                setTimeout(() => {
+                    document.getElementById('splash-screen').style.display = 'none';
+                    speak('สวัสดีครับ น้องนมเย็นยินดีให้บริการ มีข้อมูลข่าวสารและกิจกรรมใหม่ๆ รออยู่เพียบเลยครับ'); 
+                    renderContent('news');
+                    setInterval(updateClock, 1000);
+                    updateClock();
+                    addNotification("ยินดีต้อนรับสู่ Nong Nom Yen Kiosk!", "success");
+                }, 700);
+            });
+        };
+        
+        async function fetchWeather() {
+            try {
+                const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=13.8&longitude=102.0&current_weather=true');
+                const d = await r.json();
+                dom.weather.innerHTML = `<i class="ph-fill ph-sun text-yellow-400"></i> <span>${Math.round(d.current_weather.temperature)}°C สระแก้ว</span>`;
+            } catch (e) { dom.weather.innerHTML = 'N/A'; }
+        }
+
+        function updateClock() {
+            document.getElementById('clock').textContent = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        async function toggleCamera(silent = false) {
+            const vid = document.getElementById('video-feed');
+            const stat = document.getElementById('camera-status');
+            if (state.isCameraOn && !silent) {
+                if (state.cameraStream) state.cameraStream.getTracks().forEach(t => t.stop());
+                vid.classList.add('hidden');
+                stat.innerText = "OFFLINE";
+                stat.classList.remove('text-green-500', 'dark:text-green-400');
+                state.isCameraOn = false;
+                showToast("ปิดกล้องแล้ว");
+            } else {
+                try {
+                    if(!state.cameraStream || !state.cameraStream.active) {
+                        state.cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    }
+                    vid.srcObject = state.cameraStream;
+                    vid.play();
+                    vid.classList.remove('hidden');
+                    stat.innerText = "ONLINE";
+                    stat.classList.add('text-green-500', 'dark:text-green-400');
+                    state.isCameraOn = true;
+                    if(!silent) speak("กล้องพร้อมใช้งานครับ");
+                } catch (e) { showToast("เปิดกล้องไม่ได้", 'error'); }
+            }
+        }
+        
+        function detectMotion() {
+            if (!state.isCameraOn) return;
+            const isScreensaver = dom.screensaver.classList.contains('active');
+            const sourceVideo = isScreensaver ? dom.screensaverVideo : dom.video;
+            if (!isScreensaver && !dom.modal.classList.contains('invisible')) { requestAnimationFrame(detectMotion); return; }
+            const cvs = document.getElementById('motion-canvas');
+            if (!cvs || !sourceVideo) { requestAnimationFrame(detectMotion); return; }
+            const ctx = cvs.getContext('2d');
+            cvs.width = 64; cvs.height = 48;
+            try {
+                if(sourceVideo.readyState >= 2) {
+                    ctx.drawImage(sourceVideo, 0, 0, cvs.width, cvs.height);
+                    const cur = ctx.getImageData(0, 0, cvs.width, cvs.height);
+                    if (state.previousFrame) {
+                        let diff = 0;
+                        const d = cur.data; const p = state.previousFrame.data;
+                        for (let i = 0; i < d.length; i += 4) { if (Math.abs(d[i] - p[i]) + Math.abs(d[i + 1] - p[i + 1]) + Math.abs(d[i + 2] - p[i + 2]) > 100) diff++; }
+                        if (diff > (cvs.width * cvs.height * 0.04)) {
+                            if (isScreensaver) { wakeUp(); triggerGreeting(); } 
+                            else if (state.isAutoGreet) {
+                                if(window.resetIdleTimer) window.resetIdleTimer();
+                                if (Date.now() - state.lastGreetTime > 15000) { triggerGreeting(); state.lastGreetTime = Date.now(); }
+                                const w = document.getElementById('camera-widget');
+                                if(w) { w.style.borderColor = '#10B981'; setTimeout(() => w.style.borderColor = '', 200); }
+                            }
+                        }
+                    }
+                    state.previousFrame = cur;
+                }
+            } catch (e) {}
+            requestAnimationFrame(detectMotion);
+        }
+
+        function triggerGreeting() {
+            const h = new Date().getHours();
+            let t = h < 12 ? "สวัสดียามเช้า" : h < 16 ? "สวัสดียามบ่าย" : "สวัสดียามเย็น";
+            const msgs = ["ยินดีต้อนรับครับ", "เชิญด้านในได้เลยครับ", "สอบถามข้อมูลได้นะครับ", "น้องนมเย็นยินดีต้อนรับครับ"];
+            const msg = `${t}ครับ ${msgs[Math.floor(Math.random() * msgs.length)]}`;
+            showToast("👋 " + msg);
+            speak(msg);
+        }
+
+        async function analyzeUserBehavior() {
+            if (!state.isCameraOn) { showToast("กำลังเปิดกล้อง...", "info"); await toggleCamera(); await new Promise(r => setTimeout(r, 1000)); }
+            if (state.isAnalyzing) return;
+            state.isAnalyzing = true;
+            document.getElementById('camera-frame').classList.add('scanning');
+            showToast("AI กำลังวิเคราะห์...", "info");
+            try {
+                const video = document.getElementById('video-feed');
+                const canvas = document.createElement('canvas');
+                canvas.width = 480; canvas.height = 360;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const base64Image = canvas.toDataURL('image/jpeg').split(',')[1];
+                const prompt = "Analyze the person in the image. Are they confused, happy, looking for something? Give a JSON response: {mood: string, suggestion: string (Thai)}";
+                let analysis = { mood: "Neutral", suggestion: "สวัสดีครับ ต้องการความช่วยเหลือด้านไหนบอกได้เลยนะครับ" };
+                if (apiKey) {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${apiKey}`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64Image } }] }], generationConfig: { responseMimeType: "application/json" } })
+                    });
+                    const result = await res.json();
+                    analysis = JSON.parse(result.candidates[0].content.parts[0].text);
+                } else {
+                    await new Promise(r => setTimeout(r, 1500));
+                    const moods = ["Confused", "Happy", "Busy"];
+                    const r = moods[Math.floor(Math.random() * moods.length)];
+                    analysis = { mood: r, suggestion: r === "Confused" ? "ดูเหมือนกำลังสงสัย ลองกดปุ่มค้นหาได้นะครับ" : "สวัสดีครับ วันนี้สดใสจังเลย" };
+                }
+                document.getElementById('camera-frame').classList.remove('scanning');
+                showToast(`Mood: ${analysis.mood}`);
+                speak(analysis.suggestion);
+            } catch (e) {
+                console.error(e);
+                document.getElementById('camera-frame').classList.remove('scanning');
+                showToast("วิเคราะห์ไม่สำเร็จ", "error");
+            } finally { state.isAnalyzing = false; }
+        }
+
+        window.showToast = function(msg, type='info') { addNotification(msg, type); }
+
+        function addNotification(msg, type='info') {
+            const time = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+            state.notifications.unshift({ msg, type, time });
+            state.unreadCount++;
+            updateNotifBadge();
+            renderNotifications();
+        }
+
+        function updateNotifBadge() {
+            if (state.unreadCount > 0) {
+                dom.notifBadge.innerText = state.unreadCount > 9 ? '9+' : state.unreadCount;
+                dom.notifBadge.classList.remove('scale-0');
+            } else {
+                dom.notifBadge.classList.add('scale-0');
+            }
+        }
+
+        function toggleNotifications() {
+            const isHidden = dom.notifMenu.classList.contains('scale-0');
+            if (isHidden) {
+                dom.notifMenu.classList.remove('scale-0', 'opacity-0');
+                state.unreadCount = 0; // Mark as read when opened
+                updateNotifBadge();
+            } else {
+                dom.notifMenu.classList.add('scale-0', 'opacity-0');
+            }
+        }
+
+        function renderNotifications() {
+            if (state.notifications.length === 0) {
+                dom.notifList.innerHTML = '<div class="text-center py-8 text-gray-400 text-sm">ไม่มีการแจ้งเตือนใหม่</div>';
+                return;
+            }
+            dom.notifList.innerHTML = state.notifications.map(n => {
+                let iconClass = 'text-blue-500';
+                let iconName = 'ph-info';
+                if(n.type === 'error') { iconClass = 'text-red-500'; iconName = 'ph-warning-circle'; }
+                else if(n.type === 'success') { iconClass = 'text-green-500'; iconName = 'ph-check-circle'; }
+                
+                return `
+                <div class="p-3 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors flex gap-3 items-start border-b border-gray-50 dark:border-white/5 last:border-0">
+                    <div class="mt-0.5"><i class="ph-fill ${iconName} ${iconClass} text-lg"></i></div>
+                    <div class="flex-grow">
+                        <p class="text-sm text-gray-800 dark:text-gray-200 leading-snug">${n.msg}</p>
+                        <p class="text-[10px] text-gray-400 mt-1">${n.time}</p>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        window.clearNotifications = () => {
+            state.notifications = [];
+            renderNotifications();
+            toggleNotifications(); // close menu
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.relative') && !dom.notifMenu.classList.contains('scale-0')) {
+                dom.notifMenu.classList.add('scale-0', 'opacity-0');
+            }
+        });
+
+        setInterval(() => {
+            state.idleTime++;
+            if (state.idleTime > state.idleTimeoutConfig && !dom.screensaver.classList.contains('active')) {
+                enterScreensaver();
+            }
+        }, 1000);
+
+        async function enterScreensaver() {
+            dom.screensaver.classList.add('active');
+            if (!state.isCameraOn) { await toggleCamera(true); }
+            if (!state.cameraStream || !state.cameraStream.active) { await new Promise(r => setTimeout(r, 500)); }
+            if (state.cameraStream) {
+                dom.screensaverVideo.srcObject = state.cameraStream;
+                try { await dom.screensaverVideo.play(); } catch(e) {}
+                detectMotion();
+            }
+            updateScreensaverClock();
+        }
+
+        window.resetIdleTimer = () => {
+            state.idleTime = 0;
+            if (dom.screensaver.classList.contains('active')) { wakeUp(); }
+        };
+
+        function wakeUp() {
+            state.idleTime = 0; 
+            dom.screensaver.classList.remove('active');
+            try { dom.screensaverVideo.pause(); } catch(e){}
+        }
+
+        function updateScreensaverClock() {
+            if(dom.screensaver.classList.contains('active')) {
+                const now = new Date();
+                document.getElementById('screensaver-clock').innerText = now.toLocaleTimeString('th-TH', {hour: '2-digit', minute: '2-digit'});
+                document.getElementById('cctv-clock').innerText = now.toLocaleTimeString('th-TH', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+                requestAnimationFrame(updateScreensaverClock);
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                icon.classList.remove('ph-moon', 'text-yellow-400');
+                icon.classList.add('ph-sun', 'text-orange-500');
+                localStorage.setItem('theme', 'light');
+                showToast("สลับเป็นโหมดกลางวัน ☀️");
+            } else {
+                html.classList.add('dark');
+                html.classList.remove('light');
+                icon.classList.remove('ph-sun', 'text-orange-500');
+                icon.classList.add('ph-moon', 'text-yellow-400');
+                localStorage.setItem('theme', 'dark');
+                showToast("สลับเป็นโหมดกลางคืน 🌙");
+            }
+        }
+
+        window.toggleSound = () => {
+            state.isSoundOn = !state.isSoundOn;
+            const b = document.getElementById('sound-btn');
+            if (state.isSoundOn) {
+                b.innerHTML = '<i class="ph-fill ph-speaker-high text-green-500 dark:text-green-400 text-xl"></i>';
+                speak('เปิดเสียง');
+            } else {
+                b.innerHTML = '<i class="ph-fill ph-speaker-slash text-red-500 dark:text-red-400 text-xl"></i>';
+                stopAllSpeech();
+            }
+        };
+        
+        window.toggleAutoGreet = () => {
+            state.isAutoGreet = !state.isAutoGreet;
+            const btn = document.getElementById('auto-greet-btn');
+            const dot = document.getElementById('greet-status-dot');
+            if (state.isAutoGreet) {
+                btn.classList.add('text-green-500', 'bg-green-100', 'dark:text-green-400', 'dark:bg-green-900/20');
+                dot.classList.remove('hidden');
+                showToast("เปิดระบบทักทายอัตโนมัติ");
+                speak("เปิดระบบทักทายอัตโนมัติแล้วครับ");
+                if (!state.isCameraOn) toggleCamera(true);
+            } else {
+                btn.classList.remove('text-green-500', 'bg-green-100', 'dark:text-green-400', 'dark:bg-green-900/20');
+                dot.classList.add('hidden');
+                showToast("ปิดระบบทักทายอัตโนมัติ");
+                speak("ปิดระบบทักทายอัตโนมัติแล้วครับ");
+            }
+            saveDataToStorage();
+        }
+
+        window.startVoiceCommand = () => {
+            if (!('webkitSpeechRecognition' in window)) { showToast("เบราว์เซอร์ไม่รองรับคำสั่งเสียง", "error"); return; }
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'th-TH';
+            recognition.start();
+            showToast("กำลังฟัง...", "info");
+            recognition.onresult = (event) => {
+                const text = event.results[0][0].transcript;
+                processVoiceCommand(text);
+            };
+            recognition.onerror = (event) => { showToast("เกิดข้อผิดพลาดในการรับเสียง", "error"); };
+        }
+
+        window.processVoiceCommand = async (text) => {
+            showToast(`คำสั่ง: ${text}`);
+            if (text.includes('ข่าว') || text.includes('news')) renderContent('news');
+            else if (text.includes('กิจกรรม') || text.includes('event')) renderContent('events');
+            else if (text.includes('อาชีพ') || text.includes('career')) renderContent('career');
+            else if (text.includes('หยุด') || text.includes('stop')) stopAllSpeech();
+            else {
+                if(apiKey) {
+                    showToast("กำลังค้นหาข้อมูล...", "info");
+                    speak("รอสักครู่นะครับ น้องนมเย็นกำลังค้นหาคำตอบให้");
+                    const prompt = `คุณคือน้องนมเย็น ผู้ช่วย AI ประจำวิทยาลัย ตอบคำถามนี้อย่างละเอียด, ถูกต้อง และเป็นประโยชน์ โดยใช้ Google Search ค้นหาข้อมูลล่าสุดถ้าจำเป็น ตอบเป็นภาษาไทยที่เข้าใจง่าย: "${text}"`;
+                    const ans = await callGemini(prompt, true);
+                    if(ans) {
+                        showAnswerModal(text, ans);
+                        speak(ans);
+                    }
+                } else {
+                    speak(`คุณพูดว่า ${text} แต่ระบบ AI ยังไม่ได้รับการตั้งค่า API Key ครับ`);
+                }
+            }
+        }
+        
+        window.showAnswerModal = (q, a) => {
+            dom.modalContent.innerHTML = `
+                <div class="p-8 bg-white dark:bg-gray-900 text-gray-800 dark:text-white rounded-2xl h-full flex flex-col max-h-[80vh]">
+                    <div class="flex justify-between items-start mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
+                        <div class="flex items-center gap-4">
+                             <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                                <i class="ph-fill ph-sparkle text-2xl text-white"></i>
+                             </div>
+                             <div>
+                                <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">น้องนมเย็นช่วยตอบ</h3>
+                                <p class="text-xl font-bold line-clamp-2">"${q}"</p>
+                             </div>
+                        </div>
+                        <button onclick="closeModal()" class="p-2 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="ph-bold ph-x text-lg"></i></button>
+                    </div>
+                    <div class="flex-grow overflow-y-auto custom-scrollbar prose dark:prose-invert max-w-none p-2">
+                        <div class="markdown-body text-lg leading-relaxed text-gray-700 dark:text-gray-300">${marked.parse(a)}</div>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center text-xs text-gray-400">
+                        <span class="flex items-center gap-1"><i class="ph-fill ph-google-logo"></i> ข้อมูลจาก Google Search & Gemini</span>
+                    </div>
+                </div>`;
+            openModal();
+        }
+
+        window.showTypingInput = () => {
+            dom.modalContent.innerHTML = `
+                <div class="p-8 bg-white dark:bg-gray-900 rounded-2xl w-full max-w-lg mx-auto h-full flex flex-col justify-center">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center mx-auto mb-3"><i class="ph-duotone ph-keyboard text-3xl text-pink-500"></i></div>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white">พิมพ์คำสั่งหรือคำถาม</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">สั่งงานน้องนมเย็นผ่านการพิมพ์</p>
+                    </div>
+                    <div class="relative w-full">
+                        <input type="text" id="manual-cmd-input" class="w-full p-4 pr-14 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-all dark:text-white placeholder-gray-400 shadow-inner" placeholder="เช่น ข่าวสาร, ใครคือนายก, สภาพอากาศ..." autofocus autocomplete="off">
+                        <button onclick="submitManualCmd()" class="absolute right-2 top-2 bottom-2 aspect-square bg-pink-500 hover:bg-pink-600 text-white rounded-xl transition-all shadow-md flex items-center justify-center transform active:scale-90"><i class="ph-bold ph-paper-plane-right text-lg"></i></button>
+                    </div>
+                    <div class="mt-6">
+                        <p class="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider text-center">คำสั่งแนะนำ</p>
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <button onclick="fillCmd('เปิดข่าวสาร')" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-pink-50 dark:hover:bg-pink-900/20 text-gray-600 dark:text-gray-300 hover:text-pink-600 border border-transparent hover:border-pink-200 rounded-lg text-xs transition-all">เปิดข่าวสาร</button>
+                            <button onclick="fillCmd('ระบบความร่วมมือ')" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-pink-50 dark:hover:bg-pink-900/20 text-gray-600 dark:text-gray-300 hover:text-pink-600 border border-transparent hover:border-pink-200 rounded-lg text-xs transition-all">ระบบ MOU</button>
+                            <button onclick="fillCmd('สภาพอากาศวันนี้')" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-pink-50 dark:hover:bg-pink-900/20 text-gray-600 dark:text-gray-300 hover:text-pink-600 border border-transparent hover:border-pink-200 rounded-lg text-xs transition-all">สภาพอากาศ</button>
+                            <button onclick="fillCmd('สวัสดี')" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-pink-50 dark:hover:bg-pink-900/20 text-gray-600 dark:text-gray-300 hover:text-pink-600 border border-transparent hover:border-pink-200 rounded-lg text-xs transition-all">สวัสดี</button>
+                        </div>
+                    </div>
+                </div>`;
+            openModal();
+            setTimeout(() => { const input = document.getElementById('manual-cmd-input'); if(input) { input.focus(); input.addEventListener('keypress', (e) => { if (e.key === 'Enter') submitManualCmd(); }); } }, 100);
+        }
+
+        window.submitManualCmd = () => {
+            const input = document.getElementById('manual-cmd-input');
+            const val = input.value.trim();
+            if (val) { closeModal(); processVoiceCommand(val); } else { input.classList.add('animate-shake'); setTimeout(() => input.classList.remove('animate-shake'), 500); }
+        }
+
+        window.fillCmd = (txt) => { const input = document.getElementById('manual-cmd-input'); input.value = txt; input.focus(); }
+
+        window.handleSecretTrigger = () => {
+            state.secretClickCount++;
+            clearTimeout(state.secretClickTimer);
+            state.secretClickTimer = setTimeout(() => { state.secretClickCount = 0; }, 2000); // Increased timeout for easier triggering
+            if (state.secretClickCount === 5) { state.secretClickCount = 0; showAdminLogin(); }
+        };
+
+        window.showAdminLogin = () => {
+            dom.modalContent.innerHTML = `
+                <div class="p-8 bg-white dark:bg-gray-900 text-gray-800 dark:text-white rounded-2xl h-full flex flex-col items-center justify-center text-center max-w-sm mx-auto">
+                    <div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6 shadow-inner"><i class="ph-fill ph-lock-key text-4xl text-gray-500 dark:text-gray-400"></i></div>
+                    <h2 class="text-2xl font-bold mb-2">เข้าสู่ระบบผู้ดูแล</h2>
+                    <p class="text-sm text-gray-500 mb-6">กรุณากรอกรหัส PIN เพื่อจัดการระบบ</p>
+                    <div class="w-full relative mb-6"><input type="password" id="admin-pin-input" class="w-full text-center text-3xl tracking-[0.5em] font-bold py-3 bg-gray-50 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-pink-500 focus:ring-4 focus:ring-pink-500/20 outline-none transition-all dark:text-white" maxlength="4" placeholder="••••" autofocus></div>
+                    <button onclick="checkAdminPin()" class="w-full bg-gray-900 hover:bg-black dark:bg-white dark:hover:bg-gray-200 dark:text-gray-900 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg transform active:scale-95 mb-3">ยืนยันรหัส</button>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm">ยกเลิก</button>
+                </div>`;
+            openModal();
+            setTimeout(() => { const input = document.getElementById('admin-pin-input'); if(input) { input.focus(); input.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAdminPin(); }); } }, 100);
+            speak("กรุณากรอกรหัสผ่านผู้ดูแลระบบครับ");
+        };
+
+        window.checkAdminPin = () => {
+            const pin = document.getElementById('admin-pin-input').value;
+            if (pin === '1234') { 
+                speak("รหัสถูกต้อง กำลังเข้าสู่ระบบจัดการครับ");
+                showToast("Login Success", "success");
+                showAdminDashboard();
+            } else {
+                const input = document.getElementById('admin-pin-input');
+                input.value = '';
+                input.classList.add('animate-shake');
+                input.style.borderColor = '#ef4444';
+                setTimeout(() => { input.classList.remove('animate-shake'); input.style.borderColor = ''; }, 500);
+                showToast("รหัสไม่ถูกต้อง", "error");
+                speak("รหัสไม่ถูกต้องครับ");
+            }
+        };
+
+        window.showAdminDashboard = () => {
+            dom.modalContent.classList.remove('max-w-4xl');
+            dom.modalContent.classList.add('w-[95vw]', 'h-[90vh]', 'max-w-7xl');
+            renderAdminUI('dashboard');
+        }
+
+        window.renderAdminUI = (tab) => {
+            const menuItems = [
+                { id: 'dashboard', icon: 'ph-gauge', label: 'ภาพรวมระบบ' },
+                { id: 'news', icon: 'ph-newspaper', label: 'จัดการข่าวสาร' },
+                { id: 'broadcast', icon: 'ph-megaphone', label: 'ประกาศเสียง' },
+                { id: 'settings', icon: 'ph-sliders', label: 'ตั้งค่าระบบ' }
+            ];
+
+            let contentHTML = '';
+            
+            if (tab === 'dashboard') {
+                 contentHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div class="flex justify-between items-start mb-4"><div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl text-green-600 dark:text-green-400"><i class="ph-bold ph-circle-wavy-check text-2xl"></i></div><span class="text-xs font-bold text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">ONLINE</span></div>
+                            <h3 class="text-3xl font-bold text-gray-800 dark:text-white mb-1">98%</h3><p class="text-sm text-gray-500">System Health</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div class="flex justify-between items-start mb-4"><div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400"><i class="ph-bold ph-users text-2xl"></i></div></div>
+                            <h3 class="text-3xl font-bold text-gray-800 dark:text-white mb-1">1,240</h3><p class="text-sm text-gray-500">การใช้งานวันนี้</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div class="flex justify-between items-start mb-4"><div class="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl text-purple-600 dark:text-purple-400"><i class="ph-bold ph-camera text-2xl"></i></div></div>
+                            <h3 class="text-3xl font-bold text-gray-800 dark:text-white mb-1">${state.isCameraOn ? 'ON' : 'OFF'}</h3><p class="text-sm text-gray-500">สถานะกล้อง AI</p>
+                        </div>
+                         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div class="flex justify-between items-start mb-4"><div class="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl text-orange-600 dark:text-orange-400"><i class="ph-bold ph-cpu text-2xl"></i></div></div>
+                            <h3 class="text-3xl font-bold text-gray-800 dark:text-white mb-1">102ms</h3><p class="text-sm text-gray-500">API Latency</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                             <h3 class="font-bold text-lg mb-4 text-gray-800 dark:text-white">สถิติการใช้งานรายสัปดาห์</h3>
+                             <div class="h-64 flex items-end justify-between px-2 gap-2">
+                                 ${[40, 65, 45, 80, 55, 90, 70].map(h => `<div class="w-full bg-blue-100 dark:bg-blue-900/30 rounded-t-lg relative group"><div style="height: ${h}%" class="absolute bottom-0 w-full bg-blue-500 rounded-t-lg group-hover:bg-pink-500 transition-colors"></div></div>`).join('')}
+                             </div>
+                             <div class="flex justify-between mt-2 text-xs text-gray-400"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+                         </div>
+                        <div class="bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl p-6 text-white">
+                            <h3 class="font-bold text-lg mb-2">ข้อความประกาศด่วน (Marquee)</h3>
+                            <p class="text-white/80 text-sm mb-4">เปลี่ยนข้อความตัววิ่งหน้าจอหลักทันที</p>
+                            <textarea id="admin-marquee-input" class="w-full bg-white/20 border border-white/30 rounded-xl p-3 text-white placeholder-white/50 mb-4 focus:outline-none focus:bg-white/30" rows="3">${document.getElementById('marquee-text').innerText.trim()}</textarea>
+                            <button onclick="updateMarquee()" class="bg-white text-purple-600 font-bold py-2 px-6 rounded-lg shadow-lg hover:bg-gray-100 transition-colors">อัปเดตทันที</button>
+                        </div>
+                    </div>`;
+            } else if (tab === 'news') {
+                contentHTML = `
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white">จัดการข่าวสาร</h2>
+                        <button onclick="showAddNewsForm()" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-xl font-bold shadow-lg flex items-center gap-2 transition-transform active:scale-95"><i class="ph-bold ph-plus"></i> เพิ่มข่าวใหม่</button>
+                    </div>
+                    
+                    <!-- News Editor (Hidden by default, shown via JS) -->
+                    <div id="news-editor" class="hidden mb-8 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg animate-fade-in">
+                        <h3 class="text-lg font-bold mb-4 text-gray-800 dark:text-white flex items-center gap-2"><i class="ph-bold ph-pencil-simple"></i> สร้างข่าวใหม่</h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <input type="text" id="news-title" placeholder="หัวข้อข่าว" class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none">
+                                <textarea id="news-desc" rows="4" placeholder="รายละเอียดเนื้อหา..." class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none"></textarea>
+                                <div class="flex gap-4">
+                                    <select id="news-category" class="w-1/2 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl">
+                                        <option value="News">ข่าวประชาสัมพันธ์</option>
+                                        <option value="Activity">กิจกรรม</option>
+                                        <option value="Career">แนะนำอาชีพ</option>
+                                    </select>
+                                    <select id="news-audience" class="w-1/2 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl">
+                                        <option value="General">ทั่วไป</option>
+                                        <option value="Student">นักเรียน</option>
+                                        <option value="Parent">ผู้ปกครอง</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <!-- Facebook Import -->
+                                <button onclick="importFromFacebook()" class="w-full py-3 bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-md transition-all">
+                                    <i class="ph-bold ph-facebook-logo text-xl"></i> ดึงข้อมูลจากเพจ Facebook
+                                </button>
+                                
+                                <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer group" onclick="document.getElementById('file-upload').click()">
+                                    <input type="file" id="file-upload" class="hidden" multiple accept="image/*,.pdf" onchange="handleFileUpload(this)">
+                                    <div id="file-preview-area">
+                                        <i class="ph-duotone ph-cloud-arrow-up text-4xl text-gray-400 group-hover:text-pink-500 mb-2 transition-colors"></i>
+                                        <p class="text-sm text-gray-500">คลิกเพื่อแนบรูปภาพ หรือไฟล์ PDF</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end gap-3 mt-6 border-t border-gray-100 dark:border-gray-700 pt-4">
+                            <button onclick="document.getElementById('news-editor').classList.add('hidden')" class="px-6 py-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">ยกเลิก</button>
+                            <button onclick="saveNews()" class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md transition-colors">บันทึกข่าว</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400"><tr><th class="p-4">หัวข้อข่าว</th><th class="p-4">หมวดหมู่</th><th class="p-4">ไฟล์แนบ</th><th class="p-4 text-right">จัดการ</th></tr></thead>
+                            <tbody class="divide-y divide-gray-100 dark:divide-gray-700" id="admin-news-table">
+                                ${state.allContent.map((item, index) => `
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors" id="news-row-${index}">
+                                        <td class="p-4 font-bold text-gray-800 dark:text-white truncate max-w-xs">${item.title}</td>
+                                        <td class="p-4"><span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">${item.category}</span></td>
+                                        <td class="p-4 text-gray-500">${item.files ? `<i class="ph-bold ph-paperclip"></i> ${item.files.length}` : '-'}</td>
+                                        <td class="p-4 text-right"><button onclick="deleteNews(${index})" class="text-red-500 hover:text-red-600 p-2"><i class="ph-bold ph-trash"></i></button></td>
+                                    </tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>`;
+            } else if (tab === 'broadcast') {
+                 contentHTML = `
+                    <div class="max-w-2xl mx-auto">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">ประกาศเสียงตามสาย (Digital Broadcast)</h2>
+                        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div class="mb-4">
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ประเภทประกาศ</label>
+                                <div class="flex gap-4">
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="b-type" value="info" checked class="text-blue-500 focus:ring-blue-500"> <span class="text-gray-600 dark:text-gray-400">แจ้งเพื่อทราบ (Info)</span></label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="b-type" value="warning" class="text-orange-500 focus:ring-orange-500"> <span class="text-gray-600 dark:text-gray-400">แจ้งเตือน (Warning)</span></label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="b-type" value="emergency" class="text-red-500 focus:ring-red-500"> <span class="text-gray-600 dark:text-gray-400">ฉุกเฉิน (Emergency)</span></label>
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ข้อความประกาศ</label>
+                                <textarea id="broadcast-msg" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-lg focus:outline-none focus:ring-2 focus:ring-pink-500" rows="4" placeholder="พิมพ์ข้อความที่ต้องการประกาศ..."></textarea>
+                            </div>
+                            <button onclick="sendBroadcast()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 transition-transform active:scale-95">
+                                <i class="ph-bold ph-megaphone-simple text-2xl"></i> ประกาศทันที
+                            </button>
+                        </div>
+                    </div>`;
+            } else if (tab === 'settings') {
+                contentHTML = `
+                    <div class="max-w-2xl mx-auto">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">ตั้งค่าระบบ</h2>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 space-y-6">
+                            <!-- ส่วนตั้งค่าทั่วไป -->
+                            <div class="border-b border-gray-100 dark:border-gray-700 pb-6">
+                                <h3 class="font-bold text-lg text-pink-500 mb-4">ทั่วไป</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ชื่อสถานศึกษา</label>
+                                        <input type="text" id="setting-school-name" value="${state.schoolName}" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:border-pink-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">เวลาเข้าโหมดพักหน้าจอ (วินาที)</label>
+                                        <input type="range" id="setting-idle-time" min="30" max="300" step="10" value="${state.idleTimeoutConfig}" class="w-full accent-pink-500 cursor-pointer" oninput="document.getElementById('idle-val').innerText = this.value + ' วินาที'">
+                                        <div class="text-right text-xs text-gray-500 mt-1" id="idle-val">${state.idleTimeoutConfig} วินาที</div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
+                                        <div>
+                                            <div class="font-bold text-gray-800 dark:text-white">Auto Greeting</div>
+                                            <div class="text-xs text-gray-500">ทักทายอัตโนมัติเมื่อเจอบุคคล</div>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="setting-auto-greet" class="sr-only peer" ${state.isAutoGreet ? 'checked' : ''}>
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 dark:peer-focus:ring-pink-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-pink-500"></div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ส่วนตั้งค่าข้อมูลติดต่อ (เพิ่มใหม่) -->
+                            <div>
+                                <h3 class="font-bold text-lg text-teal-500 mb-4">ข้อมูลติดต่อ (Contact Info)</h3>
+                                <div class="space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">เบอร์โทรศัพท์</label>
+                                            <input type="text" id="setting-contact-phone" value="${state.contactInfo.phone}" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:border-teal-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">อีเมล (Email)</label>
+                                            <input type="text" id="setting-contact-email" value="${state.contactInfo.email}" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:border-teal-500">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ชื่อเพจ Facebook</label>
+                                        <input type="text" id="setting-contact-fb-name" value="${state.contactInfo.facebookName}" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:border-teal-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ลิงก์เพจ Facebook (URL)</label>
+                                        <input type="text" id="setting-contact-fb-url" value="${state.contactInfo.facebookUrl}" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:border-teal-500 text-xs font-mono">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ที่อยู่</label>
+                                        <textarea id="setting-contact-address" rows="2" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:border-teal-500">${state.contactInfo.address}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onclick="saveSettings()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl shadow-md mt-4">บันทึกการตั้งค่า</button>
+                        </div>
+                    </div>`;
+            }
+
+            dom.modalContent.innerHTML = `
+                <div class="flex h-full bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white rounded-2xl overflow-hidden">
+                    <div class="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col flex-shrink-0">
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center text-white shadow-lg flex-shrink-0"><i class="ph-bold ph-gear"></i></div>
+                            <div class="overflow-hidden"><h2 class="font-bold text-lg leading-none truncate">Admin Panel</h2><span class="text-[10px] text-green-500 font-mono flex items-center gap-1"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> SYSTEM ONLINE</span></div>
+                        </div>
+                        <nav class="flex-grow p-4 space-y-2 overflow-y-auto">
+                            ${menuItems.map(m => `<button onclick="renderAdminUI('${m.id}')" class="w-full text-left px-4 py-3 rounded-xl ${tab === m.id ? 'bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 font-bold shadow-sm' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-600 dark:text-gray-400 font-medium'} flex items-center gap-3 transition-colors"><i class="ph-bold ${m.icon}"></i> ${m.label}</button>`).join('')}
+                        </nav>
+                        <div class="p-4 border-t border-gray-200 dark:border-gray-700"><button onclick="closeModalAndReset()" class="w-full py-3 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors border border-red-200 dark:border-red-900/50"><i class="ph-bold ph-sign-out"></i> ออกจากระบบ</button></div>
+                    </div>
+                    <div class="flex-grow p-8 overflow-y-auto bg-gray-50 dark:bg-black/20 custom-scrollbar" id="admin-content-area">${contentHTML}</div>
+                </div>`;
+        }
+
+        window.updateMarquee = () => {
+            const txt = document.getElementById('admin-marquee-input').value;
+            const marquee = document.getElementById('marquee-text');
+            if (marquee) marquee.innerText = txt;
+            showToast("อัปเดตข้อความประกาศแล้ว", "success");
+            speak("อัปเดตข้อความประกาศเรียบร้อยครับ");
+        }
+
+        window.closeModalAndReset = () => {
+            closeModal();
+            setTimeout(() => {
+                dom.modalContent.classList.add('max-w-4xl');
+                dom.modalContent.classList.remove('w-[95vw]', 'h-[90vh]', 'max-w-7xl');
+            }, 300);
+        }
+        
+        // --- Broadcast Logic ---
+        window.sendBroadcast = () => {
+            const msg = document.getElementById('broadcast-msg').value;
+            const type = document.querySelector('input[name="b-type"]:checked').value;
+            if(!msg) return showToast("กรุณาใส่ข้อความ", "error");
+            closeModalAndReset();
+            const overlay = document.createElement('div');
+            overlay.className = "fixed inset-0 z-[200] bg-black/80 flex items-center justify-center animate-fade-in";
+            let color = type === 'emergency' ? 'red' : type === 'warning' ? 'orange' : 'blue';
+            overlay.innerHTML = `<div class="text-center animate-bounce-slow"><div class="w-32 h-32 rounded-full bg-${color}-500/20 flex items-center justify-center mx-auto mb-6 animate-pulse"><i class="ph-fill ph-megaphone text-6xl text-${color}-500"></i></div><h1 class="text-4xl font-bold text-white mb-4 uppercase tracking-widest">${type} ANNOUNCEMENT</h1><p class="text-2xl text-white/90 bg-${color}-600/50 px-8 py-4 rounded-xl backdrop-blur-md max-w-2xl mx-auto border border-${color}-400/30 shadow-2xl">${msg}</p></div>`;
+            document.body.appendChild(overlay);
+            speak("ประกาศ... " + msg);
+            setTimeout(() => { overlay.style.opacity = '0'; setTimeout(() => overlay.remove(), 500); }, 8000);
+        }
+
+        window.saveSettings = () => {
+            state.schoolName = document.getElementById('setting-school-name').value;
+            state.idleTimeoutConfig = parseInt(document.getElementById('setting-idle-time').value);
+            const autoGreet = document.getElementById('setting-auto-greet').checked;
+            
+            // บันทึกข้อมูลติดต่อจากฟอร์มลง State
+            state.contactInfo = {
+                phone: document.getElementById('setting-contact-phone').value,
+                email: document.getElementById('setting-contact-email').value,
+                facebookName: document.getElementById('setting-contact-fb-name').value,
+                facebookUrl: document.getElementById('setting-contact-fb-url').value,
+                address: document.getElementById('setting-contact-address').value
+            };
+
+            dom.schoolNameDisplay.innerText = state.schoolName;
+            if(state.isAutoGreet !== autoGreet) toggleAutoGreet();
+            saveDataToStorage(); // Auto-save settings
+            showToast("บันทึกการตั้งค่าเรียบร้อย", "success");
+            speak("บันทึกการตั้งค่าเรียบร้อยครับ");
+        }
+        
+        // --- New Admin News Management Functions ---
+        window.showAddNewsForm = () => {
+            document.getElementById('news-editor').classList.remove('hidden');
+            state.tempFiles = [];
+        }
+
+        window.handleFileUpload = (input) => {
+            const previewArea = document.getElementById('file-preview-area');
+            const files = Array.from(input.files);
+            
+            if(files.length > 0) {
+                previewArea.innerHTML = `<div class="grid grid-cols-2 gap-2 text-left"></div>`;
+                const grid = previewArea.firstElementChild;
+                
+                files.forEach(file => {
+                    state.tempFiles.push(file);
+                    const isImg = file.type.startsWith('image/');
+                    const item = document.createElement('div');
+                    item.className = "flex items-center gap-2 bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-xs truncate";
+                    
+                    if(isImg) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                             item.innerHTML = `<img src="${e.target.result}" class="w-8 h-8 rounded object-cover"> <span class="truncate">${file.name}</span>`;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        item.innerHTML = `<i class="ph-bold ph-file-pdf text-red-500 text-xl"></i> <span class="truncate">${file.name}</span>`;
+                    }
+                    grid.appendChild(item);
+                });
+            }
+        }
+
+        window.importFromFacebook = () => {
+            // Loading Animation Simulation
+            const btn = document.querySelector('button[onclick="importFromFacebook()"]');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> กำลังเชื่อมต่อเพจ...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+                
+                const mockPosts = [
+                    { title: "รับสมัครนักเรียน นักศึกษาใหม่ ประจำปีการศึกษา 2568", desc: "วิทยาลัยเทคนิควังน้ำเย็น เปิดรับสมัครนักเรียนระดับ ปวช. และ ปวส. รอบโควตา...", date: "2 ชั่วโมงที่แล้ว" },
+                    { title: "กิจกรรมจิตอาสาพัฒนาชุมชน แผนกช่างยนต์", desc: "นักเรียนแผนกวิชาช่างยนต์ ร่วมให้บริการเปลี่ยนถ่ายน้ำมันเครื่องฟรี ณ ลานอเนกประสงค์...", date: "5 ชั่วโมงที่แล้ว" },
+                    { title: "ประกาศผลการเรียน ภาคเรียนที่ 1/2567", desc: "นักเรียนสามารถตรวจสอบผลการเรียนได้ผ่านระบบ ศธ.02 (SGS) ได้ตั้งแต่บัดนี้เป็นต้นไป", date: "1 วันที่แล้ว" }
+                ];
+                
+                const selector = document.createElement('div');
+                selector.className = "fixed inset-0 z-[80] flex items-center justify-center bg-black/50 p-4";
+                selector.innerHTML = `
+                    <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-xl p-6 shadow-2xl animate-fade-in">
+                        <div class="flex justify-between items-center mb-4 border-b border-gray-100 dark:border-gray-700 pb-3">
+                            <div>
+                                <h3 class="font-bold text-lg flex items-center gap-2"><i class="ph-bold ph-facebook-logo text-blue-600"></i> เลือกโพสต์จากเพจ</h3>
+                                <p class="text-[10px] text-gray-400 mt-1 truncate max-w-[250px]">${state.contactInfo.facebookUrl}</p>
+                            </div>
+                            <button onclick="this.closest('.fixed').remove()"><i class="ph-bold ph-x"></i></button>
+                        </div>
+                        <div class="space-y-2 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                            ${mockPosts.map((p, i) => `
+                                <div onclick='fillFromFB(${JSON.stringify(p).replace(/'/g, "&#39;")}); this.closest(".fixed").remove()' class="p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-pointer transition-colors group">
+                                    <div class="flex justify-between items-start">
+                                        <p class="font-bold text-sm text-gray-800 dark:text-white line-clamp-1 group-hover:text-blue-600 transition-colors">${p.title}</p>
+                                        <i class="ph-bold ph-arrow-circle-down text-gray-300 group-hover:text-blue-500"></i>
+                                    </div>
+                                    <p class="text-xs text-gray-500 line-clamp-2 mt-1">${p.desc}</p>
+                                    <div class="flex justify-between items-center mt-2">
+                                        <span class="text-[10px] bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 px-1.5 py-0.5 rounded">Facebook Post</span>
+                                        <p class="text-[10px] text-gray-400">${p.date}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-4 text-center">*จำลองการเชื่อมต่อ API จากเพจ: ${state.contactInfo.facebookName}</p>
+                    </div>
+                `;
+                document.body.appendChild(selector);
+            }, 1000); // 1s Fake loading
+        }
+
+        window.fillFromFB = (post) => {
+            document.getElementById('news-title').value = post.title;
+            document.getElementById('news-desc').value = post.desc;
+            showToast("ดึงข้อมูลจาก Facebook เรียบร้อย");
+        }
+
+        window.saveNews = () => {
+            const title = document.getElementById('news-title').value;
+            const desc = document.getElementById('news-desc').value;
+            const category = document.getElementById('news-category').value;
+            const audience = document.getElementById('news-audience').value;
+            
+            if(!title || !desc) return showToast("กรุณากรอกข้อมูลให้ครบ", "error");
+            
+            const newItem = {
+                title, desc, category, audience,
+                img: state.tempFiles.find(f => f.type.startsWith('image/')) ? URL.createObjectURL(state.tempFiles.find(f => f.type.startsWith('image/'))) : null,
+                files: state.tempFiles
+            };
+            
+            // Add to beginning of list
+            state.allContent.unshift(newItem);
+            saveDataToStorage(); // Auto-save
+            
+            renderAdminUI('news'); // Re-render table completely
+            
+            document.getElementById('news-editor').classList.add('hidden');
+            showToast("บันทึกข่าวเรียบร้อย", "success");
+            
+            // Reset fields
+            document.getElementById('news-title').value = '';
+            document.getElementById('news-desc').value = '';
+            document.getElementById('file-preview-area').innerHTML = `<i class="ph-duotone ph-cloud-arrow-up text-4xl text-gray-400 group-hover:text-pink-500 mb-2 transition-colors"></i><p class="text-sm text-gray-500">คลิกเพื่อแนบรูปภาพ หรือไฟล์ PDF</p>`;
+        }
+
+        window.deleteNews = (index) => {
+            showConfirmModal(
+                'delete',
+                'ยืนยันการลบข่าว?',
+                'คุณต้องการลบข่าวนี้ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้',
+                () => {
+                    state.allContent.splice(index, 1);
+                    saveDataToStorage();
+                    renderAdminUI('news');
+                    showToast("ลบข่าวเรียบร้อย", "success");
+                }
+            );
+        }
+        
+        // --- App Launcher Functions ---
+        window.openModal = () => {
+            dom.modal.classList.remove('invisible', 'opacity-0');
+        }
+        window.closeModal = () => {
+            dom.modal.classList.add('invisible', 'opacity-0');
+            setTimeout(() => { dom.modalContent.innerHTML = ''; }, 300); 
+        }
+
+        // Generic Confirm Modal Function
+        window.showConfirmModal = (type, title, message, onConfirm) => {
+            const modal = document.getElementById('confirm-modal');
+            const content = modal.querySelector('.relative');
+            
+            const iconBg = document.getElementById('confirm-icon-bg');
+            const icon = document.getElementById('confirm-icon');
+            const titleEl = document.getElementById('confirm-title');
+            const msgEl = document.getElementById('confirm-message');
+            const confirmBtn = document.getElementById('confirm-action-btn');
+
+            // Set content
+            titleEl.innerText = title;
+            msgEl.innerText = message;
+
+            // Set Style based on type
+            if (type === 'delete') {
+                iconBg.className = "w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4 text-red-600 dark:text-red-400 transition-colors";
+                icon.className = "ph-duotone ph-trash text-3xl";
+                confirmBtn.className = "flex-1 py-3 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 shadow-lg transition-colors";
+                confirmBtn.innerText = "ลบข้อมูล";
+            } else {
+                // Default / Link
+                iconBg.className = "w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400 transition-colors";
+                icon.className = "ph-duotone ph-arrow-square-out text-3xl";
+                confirmBtn.className = "flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg transition-colors";
+                confirmBtn.innerText = "ยืนยัน";
+            }
+
+            // Set action
+            confirmBtn.onclick = () => {
+                onConfirm();
+                closeConfirmModal();
+            };
+
+            // Show modal
+            modal.classList.remove('invisible', 'opacity-0');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+            speak(title);
+        }
+
+        window.openExternal = (url) => {
+            showConfirmModal(
+                'link',
+                'เปิดเว็บไซต์ภายนอก?',
+                'คุณกำลังจะออกจาก Kiosk เพื่อไปยังเว็บไซต์อื่น',
+                () => { window.open(url, '_blank'); }
+            );
+        }
+
+        window.closeConfirmModal = () => {
+            const modal = document.getElementById('confirm-modal');
+            const content = modal.querySelector('.relative');
+            
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('invisible');
+            }, 300);
+        }
+
+        window.showAllApps = () => {
+            dom.modalContent.innerHTML = `
+                <div class="p-8 bg-white dark:bg-gray-900 text-gray-800 dark:text-white rounded-2xl h-full flex flex-col relative">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
+                    <h2 class="text-2xl font-bold mb-6 text-center">บริการเสริม (Smart Services)</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 overflow-y-auto custom-scrollbar p-2">
+                        
+                        <!-- Internal System -->
+                        <button onclick="showMOU()" class="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-all group border border-indigo-100 dark:border-indigo-900 shadow-sm hover:shadow-md cursor-pointer active:scale-95">
+                            <div class="w-16 h-16 bg-indigo-100 dark:bg-indigo-800 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-3xl group-hover:scale-110 transition-transform"><i class="ph-duotone ph-handshake"></i></div>
+                            <span class="font-bold text-sm">ระบบ MOU</span>
+                        </button>
+
+                        <!-- External Real Systems -->
+                        <button onclick="openExternal('http://www.wangcc.ac.th/')" class="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all group border border-blue-100 dark:border-blue-900 shadow-sm hover:shadow-md cursor-pointer active:scale-95">
+                            <div class="w-16 h-16 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 text-3xl group-hover:scale-110 transition-transform"><i class="ph-duotone ph-globe-hemisphere-east"></i></div>
+                            <span class="font-bold text-sm">เว็บไซต์วิทยาลัย</span>
+                        </button>
+
+                        <button onclick="openExternal('https://rms.wangcc.ac.th/?p=login&p_to=')" class="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-cyan-50 dark:bg-cyan-900/20 hover:bg-cyan-100 dark:hover:bg-cyan-900/40 transition-all group border border-cyan-100 dark:border-cyan-900 shadow-sm hover:shadow-md cursor-pointer active:scale-95">
+                            <div class="w-16 h-16 bg-cyan-100 dark:bg-cyan-800 rounded-full flex items-center justify-center text-cyan-600 dark:text-cyan-400 text-3xl group-hover:scale-110 transition-transform"><i class="ph-duotone ph-files"></i></div>
+                            <span class="font-bold text-sm">ระบบ RMS</span>
+                        </button>
+
+                        <button onclick="openExternal('https://std2018.vec.go.th/web/')" class="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-violet-50 dark:bg-violet-900/20 hover:bg-violet-100 dark:hover:bg-violet-900/40 transition-all group border border-violet-100 dark:border-violet-900 shadow-sm hover:shadow-md cursor-pointer active:scale-95">
+                            <div class="w-16 h-16 bg-violet-100 dark:bg-violet-800 rounded-full flex items-center justify-center text-violet-600 dark:text-violet-400 text-3xl group-hover:scale-110 transition-transform"><i class="ph-duotone ph-identification-card"></i></div>
+                            <span class="font-bold text-sm">ระบบ STD2018 (V-COP)</span>
+                        </button>
+
+                        <!-- Real Utilities -->
+                        <button onclick="showContact()" class="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-teal-50 dark:bg-teal-900/20 hover:bg-teal-100 dark:hover:bg-teal-900/40 transition-all group border border-teal-100 dark:border-teal-900 shadow-sm hover:shadow-md cursor-pointer active:scale-95">
+                            <div class="w-16 h-16 bg-teal-100 dark:bg-teal-800 rounded-full flex items-center justify-center text-teal-600 dark:text-teal-400 text-3xl group-hover:scale-110 transition-transform"><i class="ph-duotone ph-phone-call"></i></div>
+                            <span class="font-bold text-sm">ติดต่อสอบถาม</span>
+                        </button>
+
+                        <button onclick="openExternal('https://admission.vec.go.th/')" class="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-rose-50 dark:bg-rose-900/20 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-all group border border-rose-100 dark:border-rose-900 shadow-sm hover:shadow-md cursor-pointer active:scale-95">
+                            <div class="w-16 h-16 bg-rose-100 dark:bg-rose-800 rounded-full flex items-center justify-center text-rose-600 dark:text-rose-400 text-3xl group-hover:scale-110 transition-transform"><i class="ph-duotone ph-user-plus"></i></div>
+                            <span class="font-bold text-sm">รับสมัครนักเรียน</span>
+                        </button>
+
+                        <!-- Entertainment -->
+                        <button onclick="showFunZone()" class="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-pink-50 dark:bg-pink-900/20 hover:bg-pink-100 dark:hover:bg-pink-900/40 transition-all group border border-pink-100 dark:border-pink-900 shadow-sm hover:shadow-md cursor-pointer active:scale-95">
+                            <div class="w-16 h-16 bg-pink-100 dark:bg-pink-800 rounded-full flex items-center justify-center text-pink-600 dark:text-pink-400 text-3xl group-hover:scale-110 transition-transform"><i class="ph-duotone ph-game-controller"></i></div>
+                            <span class="font-bold text-sm">มุมพักผ่อน</span>
+                        </button>
+
+                        <!-- Admin -->
+                        <button onclick="showAdminLogin()" class="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all group border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md cursor-pointer active:scale-95">
+                            <div class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 text-3xl group-hover:scale-110 transition-transform"><i class="ph-duotone ph-shield-check"></i></div>
+                            <span class="font-bold text-sm">ผู้ดูแลระบบ</span>
+                        </button>
+                    </div>
+                </div>`;
+            openModal();
+            speak("เลือกบริการที่ต้องการได้เลยครับ");
+        }
+        
+        window.showContact = () => {
+            dom.modalContent.innerHTML = `
+                <div class="p-8 bg-white dark:bg-gray-900 text-gray-800 dark:text-white rounded-2xl h-full flex flex-col items-center justify-center text-center relative overflow-hidden">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors z-10"><i class="ph-bold ph-x text-xl"></i></button>
+                    
+                    <div class="relative z-10 max-w-2xl w-full">
+                        <div class="w-24 h-24 bg-gradient-to-tr from-teal-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg text-white">
+                            <i class="ph-duotone ph-chats-circle text-5xl"></i>
+                        </div>
+                        
+                        <h2 class="text-3xl font-bold mb-2 text-gray-800 dark:text-white">ติดต่อสอบถาม</h2>
+                        <p class="text-gray-500 dark:text-gray-400 mb-8">${state.schoolName} พร้อมให้บริการข้อมูล</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                            <a href="tel:${state.contactInfo.phone.replace(/-/g, '')}" class="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:border-teal-500 dark:hover:border-teal-500 transition-all group">
+                                <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-phone"></i></div>
+                                <div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase">เบอร์โทรศัพท์</p>
+                                    <p class="text-lg font-bold text-gray-800 dark:text-white">${state.contactInfo.phone}</p>
+                                </div>
+                            </a>
+                            
+                            <button onclick="openExternal('${state.contactInfo.facebookUrl}')" class="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-all group text-left w-full">
+                                <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-facebook-logo"></i></div>
+                                <div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase">Facebook Page</p>
+                                    <p class="text-lg font-bold text-gray-800 dark:text-white line-clamp-1">${state.contactInfo.facebookName}</p>
+                                </div>
+                            </button>
+                            
+                            <div class="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:border-red-500 dark:hover:border-red-500 transition-all group">
+                                <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-envelope-simple"></i></div>
+                                <div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase">อีเมล</p>
+                                    <p class="text-sm font-bold text-gray-800 dark:text-white line-clamp-1">${state.contactInfo.email}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-all group">
+                                <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-map-pin"></i></div>
+                                <div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase">ที่อยู่</p>
+                                    <p class="text-xs font-bold text-gray-800 dark:text-white line-clamp-2">${state.contactInfo.address}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            openModal();
+            speak("ข้อมูลการติดต่อวิทยาลัยครับ");
+        }
+        
+        window.showMOU = () => {
+            dom.modalContent.innerHTML = `
+                <div class="p-8 bg-white dark:bg-gray-900 text-gray-800 dark:text-white rounded-2xl h-full flex flex-col items-center justify-center text-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-indigo-500/10 to-transparent"></div>
+                    <div class="relative z-10 mb-6">
+                        <div class="w-24 h-24 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg border-4 border-white dark:border-gray-800">
+                            <i class="ph-duotone ph-handshake text-5xl text-indigo-600 dark:text-indigo-400"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">ระบบความร่วมมือ (MOU)</h2>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm max-w-md mx-auto">ระบบฐานข้อมูลสถานประกอบการและบันทึกข้อมูลการฝึกงาน</p>
+                    </div>
+                    <div class="relative z-10 w-full max-w-sm space-y-4">
+                        <button onclick="openMOUPopup()" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white p-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-3 group">
+                            <span>เปิดหน้าต่างป๊อปอัพ</span><i class="ph-bold ph-arrow-square-out text-2xl group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm font-medium transition-colors">ยกเลิก / กลับไปหน้าหลัก</button>
+                    </div>
+                </div>`;
+            openModal();
+            speak("เนื่องจากระบบความปลอดภัย กรุณากดปุ่มเปิดหน้าต่างป๊อปอัพ เพื่อเข้าใช้งานระบบครับ");
+        }
+
+        window.openMOUPopup = () => {
+            const width = 1024, height = 800, left = (screen.width - width) / 2, top = (screen.height - height) / 2;
+            window.open(MOU_SYSTEM_URL, 'MOUSystem', `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=yes`);
+            closeModal();
+            showToast("เปิดระบบความร่วมมือแล้ว");
+        }
+
+        window.showParentPortal = () => {
+            dom.modalContent.innerHTML = `
+                <div class="p-8 bg-white dark:bg-gray-900 text-gray-800 dark:text-white rounded-2xl h-full flex flex-col">
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
+                        <div><h2 class="text-2xl font-bold text-blue-600 dark:text-blue-400">Parent Portal</h2><p class="text-sm text-gray-500 dark:text-gray-400">ระบบติดตามผลการเรียนสำหรับผู้ปกครอง</p></div>
+                        <button onclick="closeModal()" class="bg-gray-100 dark:bg-gray-800 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><i class="ph-bold ph-x text-lg"></i></button>
+                    </div>
+                    <div class="flex flex-col gap-4 max-w-md mx-auto w-full mt-4">
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-900/50 text-center"><i class="ph-duotone ph-student text-4xl text-blue-500 mb-2"></i><p class="text-sm text-blue-800 dark:text-blue-200">กรุณากรอกรหัสนักเรียนเพื่อตรวจสอบข้อมูล</p></div>
+                        <div class="flex gap-2"><input type="text" id="student-id-input" placeholder="เช่น 66001" class="flex-grow p-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-xl font-mono text-center focus:border-blue-500 outline-none shadow-inner text-gray-900 dark:text-white"><button onclick="fetchStudentInfo()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-xl font-bold shadow-lg transition-transform active:scale-95"><i class="ph-bold ph-magnifying-glass text-xl"></i></button></div>
+                        <div id="student-result" class="mt-4 min-h-[100px]"></div>
+                    </div>
+                </div>`;
+            openModal();
+            speak("เข้าสู่เมนูผู้ปกครอง กรุณากรอกรหัสนักเรียนครับ");
+        };
+
+        window.fetchStudentInfo = async () => {
+            const id = document.getElementById('student-id-input').value;
+            if (!id) return showToast('กรุณากรอกรหัส', 'error');
+            const r = document.getElementById('student-result');
+            r.innerHTML = '<div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent mx-auto"></div></div>';
+            setTimeout(() => {
+                if (id === '66001') {
+                    displayStudent({ studentId: '66001', name: 'นายสมชาย เรียนดี', gpa: '3.85', attendance: '98%', status: 'ปกติ', major: 'เทคโนโลยีสารสนเทศ', advisor: 'อ.ใจดี มีเมตตา' });
+                } else {
+                    r.innerHTML = '<div class="text-center py-4 text-red-500"><i class="ph-bold ph-warning-circle text-3xl mb-2"></i><p>ไม่พบข้อมูลนักเรียนรหัสนี้</p></div>';
+                    speak("ไม่พบข้อมูลครับ");
+                }
+            }, 1000);
+        };
+
+        function displayStudent(s) {
+            document.getElementById('student-result').innerHTML = `
+                <div class="bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-500/30 rounded-xl p-5 shadow-lg animate-fade-in">
+                    <div class="flex items-center gap-4 mb-4 pb-4 border-b border-gray-100 dark:border-gray-700"><div class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden border-2 border-blue-400"><i class="ph-fill ph-student text-2xl text-gray-400"></i></div><div><h3 class="text-lg font-bold text-gray-800 dark:text-white leading-none mb-1">${s.name}</h3><p class="text-blue-500 font-mono text-sm">ID: ${s.studentId} | ${s.major}</p></div></div>
+                    <div class="grid grid-cols-3 gap-2 text-center mb-4"><div class="bg-gray-50 dark:bg-gray-900/50 p-2 rounded-lg border border-gray-200 dark:border-gray-700"><div class="text-[10px] text-gray-500 uppercase">GPA</div><div class="text-xl font-bold text-green-500">${s.gpa}</div></div><div class="bg-gray-50 dark:bg-gray-900/50 p-2 rounded-lg border border-gray-200 dark:border-gray-700"><div class="text-[10px] text-gray-500 uppercase">เข้าเรียน</div><div class="text-xl font-bold text-yellow-500">${s.attendance}</div></div><div class="bg-gray-50 dark:bg-gray-900/50 p-2 rounded-lg border border-gray-200 dark:border-gray-700"><div class="text-[10px] text-gray-500 uppercase">สถานะ</div><div class="text-xl font-bold text-blue-500">${s.status}</div></div></div>
+                    <p class="text-xs text-gray-500 text-center">ที่ปรึกษา: ${s.advisor}</p>
+                </div>`;
+            speak(`ข้อมูลของ ${s.name} ผลการเรียน ${s.gpa} ครับ`);
+        }
+        
+        window.showVocationalHub = () => {
+             dom.modalContent.innerHTML = `<div class="p-6 bg-white dark:bg-gray-900 h-full flex flex-col"><div class="flex justify-between mb-4"><h3 class="text-xl font-bold text-purple-600">ทำเนียบแผนกวิชา</h3><button onclick="closeModal()" class="text-gray-500"><i class="ph-bold ph-x"></i></button></div><div class="overflow-y-auto custom-scrollbar space-y-2">${['ช่างยนต์: 081-xxx-xxxx', 'ช่างไฟฟ้ากำลัง: 082-xxx-xxxx', 'อิเล็กทรอนิกส์: 083-xxx-xxxx', 'การบัญชี: 084-xxx-xxxx', 'คอมพิวเตอร์: 085-xxx-xxxx', 'การโรงแรม: 086-xxx-xxxx'].map(d => `<div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex justify-between items-center"><span class="font-bold text-gray-700 dark:text-gray-300">${d.split(':')[0]}</span><a href="tel:${d.split(':')[1].trim()}" class="text-blue-500 bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded text-sm"><i class="ph-bold ph-phone"></i> ${d.split(':')[1]}</a></div>`).join('')}</div></div>`;
+             openModal();
+        }
+
+        window.showFunZone = () => {
+            dom.modalContent.innerHTML = `
+                <div class="p-8 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-2xl h-full flex flex-col text-center relative overflow-hidden">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 bg-white/20 hover:bg-white/30 p-2 rounded-full z-10"><i class="ph-bold ph-x text-xl"></i></button>
+                    <h2 class="text-4xl font-bold mb-2 relative z-10">มุมพักผ่อน (Fun Zone)</h2><p class="text-indigo-100 mb-8 relative z-10">คลายเครียดจากการเรียน มาสนุกกันเถอะ!</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10 max-w-3xl mx-auto w-full mt-8">
+                        <button onclick="playSiamsi()" class="bg-white/10 hover:bg-white/20 border border-white/20 p-6 rounded-2xl hover:scale-105 transition-all group backdrop-blur-sm">
+                            <div class="w-24 h-24 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:rotate-12 transition-transform"><i class="ph-fill ph-scroll text-5xl text-white"></i></div>
+                            <h3 class="text-2xl font-bold">เซียมซีดิจิทัล</h3><p class="text-sm text-indigo-200 mt-2">เสี่ยงดวง ทำนายชะตา ประจำวัน</p>
+                        </button>
+                        <button onclick="startQuiz()" class="bg-white/10 hover:bg-white/20 border border-white/20 p-6 rounded-2xl hover:scale-105 transition-all group backdrop-blur-sm">
+                            <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:-rotate-12 transition-transform"><i class="ph-fill ph-brain text-5xl text-white"></i></div>
+                            <h3 class="text-2xl font-bold">เกมทายปัญหา</h3><p class="text-sm text-indigo-200 mt-2">ทดสอบความรอบรู้ 5 ข้อ</p>
+                        </button>
+                    </div>
+                </div>`;
+            openModal();
+            speak("ยินดีต้อนรับสู่มุมพักผ่อนครับ");
+        }
+        
+        // --- Fun Zone Logic ---
+        window.playSiamsi = () => {
+            dom.modalContent.innerHTML = `
+                <div class="p-8 bg-red-50 dark:bg-gray-900 text-gray-800 dark:text-white rounded-2xl h-full flex flex-col items-center justify-center text-center relative overflow-hidden">
+                    <h2 class="text-3xl font-bold text-red-600 mb-8 relative z-10">🙏 ตั้งจิตอธิษฐาน</h2>
+                    <div id="shaker" class="w-48 h-64 bg-red-100 border-4 border-red-500 rounded-t-full rounded-b-3xl relative flex items-end justify-center mb-8 overflow-hidden cursor-pointer shadow-xl z-10" onclick="doShake()"><div class="absolute bottom-0 w-full h-full flex justify-center items-end"><div class="w-4 h-40 bg-yellow-800 transform rotate-12 translate-y-10 rounded-t-lg"></div><div class="w-4 h-44 bg-yellow-700 transform -rotate-6 translate-y-5 rounded-t-lg"></div><div class="w-4 h-36 bg-yellow-900 transform rotate-0 translate-y-8 rounded-t-lg"></div></div></div>
+                    <button onclick="doShake()" id="shake-btn" class="bg-red-600 hover:bg-red-700 text-white px-12 py-4 rounded-full font-bold text-xl shadow-lg transition-transform active:scale-95 relative z-10">เขย่าเซียมซี</button>
+                    <button onclick="showFunZone()" class="mt-6 text-gray-500 underline relative z-10">ย้อนกลับ</button>
+                </div>`;
+            speak("ตั้งจิตอธิษฐานแล้วกดเขย่าเลยครับ");
+        }
+
+        window.doShake = () => {
+            const shaker = document.getElementById('shaker');
+            const btn = document.getElementById('shake-btn');
+            if(shaker.classList.contains('animate-shake')) return;
+            shaker.classList.add('animate-shake');
+            btn.disabled = true;
+            btn.innerText = "กำลังเขย่า...";
+            speak("โอม... เพี้ยง!");
+            setTimeout(() => {
+                shaker.classList.remove('animate-shake');
+                const number = Math.floor(Math.random() * 28) + 1;
+                showSiamsiResult(number);
+            }, 2000);
+        }
+
+        window.showSiamsiResult = (num) => {
+            const predictions = ["การงานรุ่งเรือง ผู้ใหญ่ให้การสนับสนุน", "ระวังเรื่องสุขภาพ พักผ่อนให้เพียงพอ", "จะมีโชคลาภจากการเดินทาง", "ความรักสดใส คนโสดจะเจอเนื้อคู่", "ตั้งใจเรียนให้มาก ผลสอบจะออกมาดี", "ระวังคำพูดจา อาจนำพาปัญหามาให้", "สิ่งที่หวังไว้จะสำเร็จในเร็ววัน", "ให้หมั่นทำบุญ ชีวิตจะราบรื่น"];
+            const pred = predictions[num % predictions.length];
+            dom.modalContent.innerHTML = `
+                <div class="p-8 bg-yellow-50 dark:bg-gray-900 text-gray-800 dark:text-white rounded-2xl h-full flex flex-col items-center justify-center text-center border-8 border-double border-red-500">
+                    <div class="w-24 h-24 rounded-full bg-red-600 text-white text-5xl font-bold flex items-center justify-center mb-4 border-4 border-yellow-400 shadow-xl">${num}</div>
+                    <h2 class="text-2xl font-bold text-red-700 dark:text-red-400 mb-4">คำทำนายใบที่ ${num}</h2>
+                    <p class="text-2xl leading-relaxed max-w-lg font-serif italic text-gray-800 dark:text-gray-200 mb-8">"${pred}"</p>
+                    <div class="flex gap-4"><button onclick="playSiamsi()" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-300 transition-colors">เล่นอีกครั้ง</button><button onclick="showFunZone()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-colors">กลับเมนู</button></div>
+                </div>`;
+            speak(pred);
+        }
+
+        let currentQuiz = 0;
+        let quizScore = 0;
+        const quizData = [{ q: "วิทยาลัยของเราตั้งอยู่ที่จังหวัดใด?", a: ["กรุงเทพฯ", "สระแก้ว", "ชลบุรี", "เชียงใหม่"], c: 1 }, { q: "V = IR เป็นสูตรของกฎอะไร?", a: ["กฎของนิวตัน", "กฎของโอห์ม", "กฎของบอยล์", "กฎจราจร"], c: 1 }, { q: "อุปกรณ์ใดใช้สำหรับวัดแรงดันไฟฟ้า?", a: ["โวลต์มิเตอร์", "แอมมิเตอร์", "เทอร์โมมิเตอร์", "บารอมิเตอร์"], c: 0 }, { q: "แผนกวิชาใดเกี่ยวข้องกับรถยนต์?", a: ["ช่างไฟฟ้า", "ช่างยนต์", "บัญชี", "คอมพิวเตอร์"], c: 1 }, { q: "CPU เปรียบเสมือนส่วนใดของมนุษย์?", a: ["ตา", "มือ", "สมอง", "หัวใจ"], c: 2 }];
+
+        window.startQuiz = () => { currentQuiz = 0; quizScore = 0; renderQuiz(); }
+        window.renderQuiz = () => {
+            if (currentQuiz >= quizData.length) {
+                dom.modalContent.innerHTML = `
+                     <div class="p-8 bg-white dark:bg-gray-900 text-gray-800 dark:text-white rounded-2xl h-full flex flex-col items-center justify-center text-center">
+                        <div class="mb-6 animate-bounce"><i class="ph-fill ph-trophy text-7xl text-yellow-400"></i></div>
+                        <h2 class="text-4xl font-bold mb-2">จบเกมแล้ว!</h2><p class="text-xl text-gray-500 mb-8">คะแนนของคุณคือ</p>
+                        <div class="text-8xl font-bold text-indigo-600 dark:text-indigo-400 mb-8">${quizScore} / ${quizData.length}</div>
+                        <button onclick="showFunZone()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-full font-bold shadow-lg transition-transform hover:scale-105">กลับเมนูหลัก</button>
+                     </div>`;
+                speak(`เก่งมากครับ คุณได้ ${quizScore} คะแนน`);
+                return;
+            }
+            const q = quizData[currentQuiz];
+            dom.modalContent.innerHTML = `
+                <div class="p-8 bg-white dark:bg-gray-900 text-gray-800 dark:text-white rounded-2xl h-full flex flex-col max-w-3xl mx-auto">
+                    <div class="flex justify-between items-center mb-8 border-b border-gray-200 dark:border-gray-700 pb-4"><span class="text-lg font-bold text-gray-400">ข้อที่ ${currentQuiz + 1}/${quizData.length}</span><span class="px-4 py-1 bg-indigo-100 text-indigo-600 rounded-full font-bold">คะแนน: ${quizScore}</span></div>
+                    <h3 class="text-3xl font-bold mb-8 leading-relaxed text-center">${q.q}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${q.a.map((ans, idx) => `<button onclick="checkAnswer(${idx})" class="p-6 rounded-2xl border-2 border-gray-200 dark:border-gray-700 hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-lg font-bold transition-all text-left flex items-center"><span class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center mr-3 text-sm">${idx+1}</span> ${ans}</button>`).join('')}
+                    </div>
+                </div>`;
+            speak(q.q);
+        }
+
+        window.checkAnswer = (idx) => {
+            if (idx === quizData[currentQuiz].c) { quizScore++; showToast("ถูกต้อง! เก่งมาก", "info"); speak("ถูกต้องครับ"); } else { showToast("ผิดครับ", "error"); speak("ยังไม่ถูกนะครับ"); }
+            currentQuiz++; setTimeout(renderQuiz, 800);
+        }
+
+        async function renderContent(category) {
+            state.currentCategory = category;
+            updateTabs(category);
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('bg-gray-100', 'dark:bg-white/10', 'shadow-inner'));
+            const btn = document.getElementById(`nav-${category}`);
+            if (btn) btn.classList.add('bg-gray-100', 'dark:bg-white/10', 'shadow-inner');
+            dom.content.innerHTML = renderSkeleton();
+            try {
+                let data = [];
+                // Use stored content if available first
+                if (state.allContent.length > 0 && state.allContent[0].category) {
+                    // Filter if needed, but for simplicity we just use allContent + mocks if empty
+                     data = state.allContent;
+                }
+                
+                if (data.length === 0) {
+                     if (GOOGLE_APP_SCRIPT_URL.includes('YOUR_APPS_SCRIPT')) {
+                        data = await getGeminiContent(category, state.currentAudience);
+                        if (!data || data.length === 0) throw new Error("Gemini empty");
+                    } else {
+                        const res = await fetch(`${GOOGLE_APP_SCRIPT_URL}?action=read&category=${category}&audience=${state.currentAudience}`);
+                        data = await res.json();
+                    }
+                }
+
+                state.allContent = data; // Update state
+                renderCards(data);
+                if(category === 'news' && data.length > 0) {
+                    document.getElementById('marquee-text').innerText = data.map(i => i.title).join(" | ");
+                }
+            } catch (e) {
+                console.error(e);
+                dom.content.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 gap-4"><i class="ph-duotone ph-wifi-slash text-6xl"></i><p>ไม่สามารถโหลดข้อมูลได้</p><button onclick="renderContent('${category}')" class="text-pink-500 font-bold">ลองใหม่</button></div>`;
+            }
+        }
+
+        function renderSkeleton() {
+            return `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pb-4">${Array(6).fill(0).map(() => 
+                `<div class="bg-white/50 dark:bg-gray-800/50 rounded-xl h-80 border border-gray-200 dark:border-white/5 animate-pulse flex flex-col overflow-hidden">
+                    <div class="h-40 bg-gray-200 dark:bg-gray-700 w-full"></div>
+                    <div class="p-5 space-y-3 flex-grow">
+                        <div class="h-6 bg-gray-200 dark:bg-gray-700 w-3/4 rounded"></div>
+                        <div class="h-4 bg-gray-200 dark:bg-gray-700 w-full rounded"></div>
+                        <div class="h-4 bg-gray-200 dark:bg-gray-700 w-2/3 rounded"></div>
+                    </div>
+                </div>`
+            ).join('')}</div>`;
+        }
+
+        function renderCards(data) {
+            if (!data || data.length === 0) {
+                dom.content.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500"><i class="ph-duotone ph-folder-dashed text-6xl mb-2"></i><p>ไม่พบข้อมูลในหมวดนี้</p></div>`;
+                return;
+            }
+            const heroItem = data[0];
+            const otherItems = data.slice(1);
+            let html = '';
+            html += `
+            <div onclick='showDetailModal(${JSON.stringify(heroItem).replace(/'/g, "&#39;")})' class="w-full aspect-video rounded-2xl overflow-hidden relative mb-6 group cursor-pointer border border-gray-200 dark:border-white/10 shadow-xl bg-gray-100 dark:bg-gray-800">
+                <img src="${heroItem.img || 'https://placehold.co/800x400/222/fff?text=News'}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent p-6 md:p-8 flex flex-col justify-end">
+                    <span class="bg-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded w-fit mb-2 shadow-lg uppercase tracking-wider backdrop-blur-sm">Highlight</span>
+                    <h2 class="text-2xl md:text-4xl font-bold text-white mb-2 leading-tight group-hover:text-pink-300 transition-colors drop-shadow-md">${heroItem.title}</h2>
+                    <p class="text-gray-200 line-clamp-2 max-w-2xl text-sm md:text-base font-light drop-shadow-sm">${heroItem.desc}</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pb-4">`;
+            otherItems.forEach((item, index) => {
+                const img = item.img || `https://placehold.co/600x400/1f2937/ffffff?text=${encodeURIComponent(item.title)}`;
+                html += `
+                <div onclick='showDetailModal(${JSON.stringify(item).replace(/'/g, "&#39;")})' class="card bg-white dark:bg-gray-800/60 border border-gray-200 dark:border-white/5 rounded-xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl flex flex-col h-full animate-fade-in hover:bg-gray-50 dark:hover:bg-gray-800 transition-all group" style="animation-delay: ${index * 50}ms">
+                    <div class="h-40 overflow-hidden relative">
+                        <img src="${img}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-gray-300 uppercase border border-white/10">${item.category}</div>
+                    </div>
+                    <div class="p-4 flex-grow flex flex-col">
+                        <h3 class="text-base font-bold leading-snug mb-2 line-clamp-2 text-gray-800 dark:text-white group-hover:text-pink-500 dark:group-hover:text-pink-400 transition-colors">${item.title}</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-3 mb-4 flex-grow font-light">${item.desc}</p>
+                        <div class="flex justify-between items-center text-[10px] text-gray-400 dark:text-gray-500 border-t border-gray-100 dark:border-white/5 pt-3 mt-auto">
+                            <span class="flex items-center gap-1"><i class="ph-fill ph-users"></i> ${item.audience}</span>
+                            <span class="text-pink-500 font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">อ่านต่อ <i class="ph-bold ph-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            html += '</div>';
+            dom.content.innerHTML = html;
+            speak(`${state.currentCategory === 'news' ? 'ข่าวสาร' : state.currentCategory === 'events' ? 'กิจกรรม' : 'ข้อมูลอาชีพ'}ล่าสุดครับ`);
+        }
+
+        function updateTabs(active) {
+            const tabs = [{ id: 'news', label: 'ข่าวสาร' }, { id: 'events', label: 'กิจกรรม' }, { id: 'career', label: 'อาชีพ' }];
+            document.getElementById('category-tabs').innerHTML = tabs.map(t => 
+                `<button onclick="renderContent('${t.id}')" class="px-4 py-1.5 rounded-full text-sm font-bold transition-all border ${active === t.id ? 'bg-pink-500 border-pink-500 text-white shadow-md' : 'bg-transparent border-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/5'}">${t.label}</button>`
+            ).join('');
+        }
+        
+        window.setAudience = (val) => { state.currentAudience = val; renderContent(state.currentCategory); showToast("เปลี่ยนกลุ่มเป้าหมายแล้ว"); };
+        window.handleSearch = (val) => { renderContent(state.currentCategory); };
+
+        // Image Viewer Logic
+        let viewerState = { scale: 1, panning: false, pointX: 0, pointY: 0, startX: 0, startY: 0 };
+
+        window.openImagePreview = (src) => {
+            viewerState = { scale: 1, panning: false, pointX: 0, pointY: 0, startX: 0, startY: 0 };
+            const viewer = document.createElement('div');
+            viewer.id = "image-viewer";
+            viewer.className = "fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center animate-fade-in";
+            viewer.innerHTML = `
+                <div class="absolute top-4 right-4 z-50 flex gap-2">
+                    <button onclick="closeImagePreview()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center backdrop-blur-md transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
+                </div>
+                <div class="relative w-full h-full overflow-hidden flex items-center justify-center" id="img-container">
+                    <img src="${src}" id="preview-img" class="max-w-[90vw] max-h-[85vh] object-contain transition-transform duration-200 ease-out origin-center shadow-2xl rounded-md">
+                </div>
+                <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 flex gap-4 bg-white/10 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 shadow-lg">
+                    <button onclick="adjustZoom(-0.5)" class="text-white hover:text-pink-400 transition-colors"><i class="ph-bold ph-minus-circle text-3xl"></i></button>
+                    <button onclick="resetZoom()" class="text-white hover:text-pink-400 transition-colors flex items-center gap-1 font-mono text-sm px-2 border border-white/20 rounded hover:bg-white/5"><i class="ph-bold ph-arrows-out-simple"></i> RESET</button>
+                    <button onclick="adjustZoom(0.5)" class="text-white hover:text-pink-400 transition-colors"><i class="ph-bold ph-plus-circle text-3xl"></i></button>
+                </div>
+            `;
+            document.body.appendChild(viewer);
+
+            const img = document.getElementById('preview-img');
+            const container = document.getElementById('img-container');
+
+            // Pan Logic
+            container.onmousedown = (e) => {
+                if(viewerState.scale > 1) {
+                    viewerState.panning = true;
+                    viewerState.startX = e.clientX - viewerState.pointX;
+                    viewerState.startY = e.clientY - viewerState.pointY;
+                    img.style.transition = 'none';
+                }
+            };
+            
+            container.onmouseup = () => { viewerState.panning = false; img.style.transition = 'transform 0.2s ease-out'; };
+            container.onmouseleave = () => { viewerState.panning = false; img.style.transition = 'transform 0.2s ease-out'; };
+            
+            container.onmousemove = (e) => {
+                if (!viewerState.panning) return;
+                e.preventDefault();
+                viewerState.pointX = e.clientX - viewerState.startX;
+                viewerState.pointY = e.clientY - viewerState.startY;
+                updateImageTransform();
+            };
+
+            // Wheel Zoom
+            container.onwheel = (e) => {
+                e.preventDefault();
+                adjustZoom(e.deltaY > 0 ? -0.2 : 0.2);
+            };
+        }
+
+        window.closeImagePreview = () => {
+            const viewer = document.getElementById('image-viewer');
+            if(viewer) {
+                viewer.classList.add('opacity-0');
+                setTimeout(() => viewer.remove(), 300);
+            }
+        }
+
+        window.adjustZoom = (delta) => {
+            viewerState.scale += delta;
+            if (viewerState.scale < 0.5) viewerState.scale = 0.5;
+            if (viewerState.scale > 5) viewerState.scale = 5;
+            if (viewerState.scale === 1) { viewerState.pointX = 0; viewerState.pointY = 0; }
+            updateImageTransform();
+        }
+
+        window.resetZoom = () => {
+            viewerState.scale = 1;
+            viewerState.pointX = 0;
+            viewerState.pointY = 0;
+            updateImageTransform();
+        }
+
+        function updateImageTransform() {
+            const img = document.getElementById('preview-img');
+            if(img) img.style.transform = `translate(${viewerState.pointX}px, ${viewerState.pointY}px) scale(${viewerState.scale})`;
+        }
+
+        window.showDetailModal = (item) => {
+            const img = item.img || `https://placehold.co/600x400/1f2937/ffffff?text=${encodeURIComponent(item.title)}`;
+            dom.modalContent.innerHTML = `
+                <div class="relative h-64 md:h-72 group cursor-zoom-in" onclick="openImagePreview('${img}')" title="คลิกเพื่อขยายรูปภาพ">
+                    <img src="${img}" class="w-full h-full object-cover rounded-t-2xl transition-transform duration-700 group-hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent pointer-events-none"></div>
+                    <div class="absolute top-4 left-4 bg-black/40 backdrop-blur-md rounded-full p-2 text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                        <i class="ph-bold ph-magnifying-glass-plus text-xl"></i>
+                    </div>
+                    <button onclick="event.stopPropagation(); closeModal()" class="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full backdrop-blur-md transition-colors z-10"><i class="ph-bold ph-x text-xl"></i></button>
+                    <div class="absolute bottom-6 left-6 right-6 pointer-events-none">
+                        <span class="bg-pink-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow mb-2 inline-block">${item.category}</span>
+                        <h2 class="text-2xl md:text-3xl font-bold text-white leading-tight drop-shadow-lg">${item.title}</h2>
+                    </div>
+                </div>
+                <div class="p-6 md:p-8 bg-white dark:bg-gray-900 overflow-y-auto custom-scrollbar flex-grow rounded-b-2xl max-h-[50vh]">
+                    <div class="prose prose-sm md:prose-base dark:prose-invert max-w-none mb-8">
+                        <p id="modal-desc" class="text-gray-700 dark:text-gray-300 leading-relaxed font-light">${item.desc}</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 dark:bg-gray-800/50 p-6 rounded-2xl border border-gray-200 dark:border-white/5">
+                        <div class="flex flex-col items-center justify-center text-center border-b md:border-b-0 md:border-r border-gray-200 dark:border-white/5 pb-4 md:pb-0 md:pr-4">
+                            <div id="qrcode" class="bg-white p-2 rounded-xl mb-2 shadow-sm"></div>
+                            <p class="text-[10px] text-gray-500 dark:text-gray-400">สแกนเพื่อเปิดบนมือถือ</p>
+                        </div>
+                        <div class="md:col-span-2 flex flex-col justify-center gap-3 pl-0 md:pl-4">
+                            <h4 class="font-bold text-gray-800 dark:text-white text-sm">เครื่องมือช่วยอ่าน</h4>
+                            ${item.link ? `<a href="${item.link}" target="_blank" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2.5 rounded-xl font-bold text-center flex items-center justify-center gap-2 shadow-lg text-sm"><i class="ph-bold ph-link"></i> เปิดลิงก์ต้นฉบับ</a>` : ''}
+                            <button onclick="summarizeContent(this)" class="w-full bg-purple-100 dark:bg-purple-900/30 hover:bg-purple-200 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors text-sm"><i class="ph-bold ph-magic-wand"></i> สรุปใจความสำคัญ (AI)</button>
+                        </div>
+                    </div>
+                </div>`;
+            openModal();
+            setTimeout(() => {
+                document.getElementById("qrcode").innerHTML = "";
+                new QRCode(document.getElementById("qrcode"), { text: item.link || "https://example.com", width: 80, height: 80 });
+            }, 100);
+        };
+        
+        async function getGeminiContent(category, audience) {
+            await new Promise(r => setTimeout(r, 800));
+            const mocks = {
+                news: [{ title: "เปิดรับสมัครนักเรียนโควตาพิเศษ 2568", desc: "วิทยาลัยการอาชีพวังน้ำเย็นเปิดรับสมัครนักเรียนโควตาเรียนดี กีฬาเด่น...", category: "News", audience: "Student" }, { title: "ประกาศหยุดเรียนวันวิสาขบูชา", desc: "วิทยาลัยฯ ปิดทำการเรียนการสอน 1 วัน ขอให้นักเรียนทบทวนบทเรียน...", category: "Announce", audience: "General" }, { title: "พิธีไหว้ครู ประจำปีการศึกษา 2567", desc: "ขอเชิญร่วมพิธีไหว้ครู เพื่อแสดงความกตัญญูกตเวที...", category: "Activity", audience: "Student" }],
+                events: [{ title: "การแข่งขันทักษะวิชาชีพ ระดับภาค", desc: "ร่วมส่งแรงใจเชียร์ตัวแทนวิทยาลัยฯ แข่งขันทักษะช่างยนต์...", category: "Contest", audience: "Student" }, { title: "โครงการจิตอาสาพัฒนาชุมชน", desc: "แผนกไฟฟ้ากำลังออกให้บริการซ่อมเครื่องใช้ไฟฟ้าฟรี...", category: "CSR", audience: "Public" }],
+                career: [{ title: "ช่างซ่อมบำรุงอากาศยาน: อาชีพรายได้สูง", desc: "เจาะลึกเส้นทางอาชีพช่างซ่อมเครื่องบิน ที่ตลาดยังขาดแคลน...", category: "Guidance", audience: "Student" }, { title: "เทรนด์อาชีพปี 2025", desc: "เตรียมความพร้อมสู่โลกการทำงานยุค AI...", category: "Article", audience: "General" }]
+            };
+            const items = mocks[category] || mocks['news'];
+            return items.map(i => ({ ...i, img: `https://placehold.co/600x400/1e293b/ffffff?text=${encodeURIComponent(i.category)}` }));
+        }
+
+        async function callGemini(t, useSearch = false) {
+            if (!apiKey) return null;
+            try {
+                const payload = { contents: [{ parts: [{ text: t }] }] };
+                if (useSearch) { payload.tools = [{ google_search: {} }]; }
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${apiKey}`, {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const d = await res.json();
+                if (d.candidates && d.candidates[0].content) { return d.candidates[0].content.parts[0].text; }
+                return "ขออภัยครับ ไม่สามารถค้นหาข้อมูลดังกล่าวได้ในขณะนี้";
+            } catch (e) { console.error(e); return null; }
+        }
+
+        window.summarizeContent = async (btn) => {
+            const txt = document.getElementById('modal-desc').innerText;
+            btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> กำลังคิด...';
+            btn.disabled = true;
+            let res = "";
+            if(apiKey) { 
+                res = await callGemini(`Summarize this in 1 short Thai sentence: ${txt}`); 
+            } else { 
+                await new Promise(r => setTimeout(r, 1000)); 
+                res = "เนื้อหานี้เป็นข้อมูลสำคัญสำหรับการพัฒนาทักษะอาชีพที่นักเรียนควรรู้"; 
+            }
+            const container = btn.parentElement;
+            btn.style.display = 'none';
+            const resultDiv = document.createElement('div');
+            resultDiv.className = "p-4 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-500/50 rounded-xl text-indigo-800 dark:text-indigo-200 font-bold animate-fade-in mt-3";
+            resultDiv.innerHTML = `<i class="ph-fill ph-sparkle text-xl mr-2 align-middle"></i> AI สรุป: ${res}`;
+            container.appendChild(resultDiv);
+            speak(res);
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) bytes[i] = binaryString.charCodeAt(i);
+            return bytes.buffer;
+        }
+        
+        function setVisualizer(a) { if (a) dom.visualizer.classList.add('speaking'); else dom.visualizer.classList.remove('speaking'); }
+        
+        function stopAllSpeech() { 
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            if (state.currentAudio) { 
+                state.currentAudio.pause(); 
+                state.currentAudio = null; 
+            }
+            // Clear the keep-alive interval for speech
+            if (state.speechInterval) {
+                clearInterval(state.speechInterval);
+                state.speechInterval = null;
+            }
+            setVisualizer(false); 
+        }
+        
+        async function speak(text) {
+            if (!state.isSoundOn || !text) return;
+            stopAllSpeech(); setVisualizer(true);
+
+            // 1. ลองใช้ Gemini TTS (เสียงธรรมชาติกว่า)
+            if (apiKey && !state.ttsFailed) {
+                try {
+                    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiTTSModel}:generateContent?key=${apiKey}`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: text }] }], generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } } } })
+                    });
+                    
+                    if (!r.ok) { throw new Error(`API Error: ${r.status} ${r.statusText}`); }
+                    const d = await r.json();
+                    if (d.error) { throw new Error(`Gemini Error: ${d.error.message}`); }
+
+                    const a = d?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+                    if (a) {
+                        const w = pcmToWav(new Int16Array(base64ToArrayBuffer(a)));
+                        state.currentAudio = new Audio(URL.createObjectURL(w));
+                        state.currentAudio.onended = () => setVisualizer(false);
+                        state.currentAudio.play();
+                        return;
+                    }
+                } catch (e) { 
+                    console.warn("TTS API Error (Switching to offline mode):", e);
+                    // ไม่ต้องจำค่า error ถาวร เผื่อเน็ตกลับมาใช้ได้
+                    // state.ttsFailed = true; 
+                }
+            }
+
+            // 2. ใช้ Web Speech API (Offline / Fallback) พร้อมระบบแก้บั๊กเสียงหาย
+            if ('speechSynthesis' in window) {
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'th-TH'; 
+                const thVoice = state.systemVoices.find(v => v.lang.includes('th')) || state.systemVoices[0];
+                if (thVoice) u.voice = thVoice;
+                
+                // ปรับค่าให้เสียงสมูทขึ้น (ค่า 1.0 คือปกติ)
+                u.rate = 1.0; 
+                u.pitch = 1.0; 
+                u.volume = 1.0;
+
+                u.onend = () => {
+                    if(state.speechInterval) clearInterval(state.speechInterval);
+                    setVisualizer(false);
+                };
+                
+                u.onerror = (e) => {
+                    console.error("Speech error:", e);
+                    if(state.speechInterval) clearInterval(state.speechInterval);
+                    setVisualizer(false);
+                };
+
+                window.speechSynthesis.speak(u);
+
+                // FIX: Chrome มีบั๊กหยุดพูดเองเมื่อประโยคยาวเกิน 15 วินาที
+                // เราใช้ setInterval เพื่อกระตุ้น (Pause/Resume) ให้ทำงานต่อ
+                if (text.length > 80) {
+                    state.speechInterval = setInterval(() => {
+                        if (!window.speechSynthesis.speaking) {
+                            clearInterval(state.speechInterval);
+                            return;
+                        }
+                        window.speechSynthesis.pause();
+                        window.speechSynthesis.resume();
+                    }, 14000);
+                }
+            } else { setVisualizer(false); }
+        }
+        
+        function pcmToWav(pcmData, sampleRate = 24000) {
+            const numSamples = pcmData.length;
+            const buffer = new ArrayBuffer(44 + numSamples * 2);
+            const view = new DataView(buffer);
+            const writeString = (view, offset, string) => { for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i)); };
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + numSamples * 2, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, numSamples * 2, true);
+            let offset = 44;
+            for (let i = 0; i < numSamples; i++, offset += 2) view.setInt16(offset, pcmData[i], true);
+            return new Blob([view], { type: 'audio/wav' });
+        }
+    </script>
+</body>
+</html>
