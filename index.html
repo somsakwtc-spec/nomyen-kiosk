@@ -6,31 +6,7 @@
     <title>Nong Nom Yen - ผู้ช่วยอาชีวะอัจฉริยะ</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        // --- วาง Firebase Config ของคุณตรงนี้ ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyBRi7jzslkfpRlycAkN9zsoPqh-7kYTZ70",
-            authDomain: "nomyen-kiosk.firebaseapp.com",
-            projectId: "nomyen-kiosk",
-            storageBucket: "nomyen-kiosk.firebasestorage.app",
-            messagingSenderId: "151238657934",
-            appId: "1:151238657934:web:464af90757fe91c99006df",
-            measurementId: "G-79EFSHN0SS"
-            };
-
-        try {
-            const app = initializeApp(firebaseConfig);
-            window.db = getFirestore(app);
-            window.firestore = { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, onSnapshot };
-            console.log("Firebase Connected");
-        } catch (e) { console.error("Firebase Error", e); }
-    </script>
-
-
-
+    
     
     <script>
         tailwind.config = {
@@ -136,6 +112,31 @@
     </style>
 </head>
 <body class="overflow-hidden h-screen flex flex-col bg-light-bg text-gray-800 dark:bg-dark-bg dark:text-white transition-colors duration-300" onclick="if(window.resetIdleTimer) window.resetIdleTimer()" onmousemove="if(window.resetIdleTimer) window.resetIdleTimer()">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- วาง Config ของคุณตรงนี้ ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRi7jzslkfpRlycAkN9zsoPqh-7kYTZ70",
+            authDomain: "nomyen-kiosk.firebaseapp.com",
+            projectId: "nomyen-kiosk",
+            storageBucket: "nomyen-kiosk.firebasestorage.app",
+            messagingSenderId: "151238657934",
+            appId: "1:151238657934:web:464af90757fe91c99006df",
+            measurementId: "G-79EFSHN0SS"
+            };
+        
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            window.db = getFirestore(app);
+            window.firestore = { collection, addDoc, deleteDoc, doc, onSnapshot };
+            console.log("🔥 Firebase Connected");
+        } catch (e) {
+            console.error("❌ Firebase Error:", e);
+        }
+    </script>
     
     <canvas id="motion-canvas" style="display: none;"></canvas>
 
@@ -435,7 +436,7 @@
         
         // โหลดข้อมูล (เปลี่ยนเป็น Real-time)
         function loadDataFromStorage() {
-            // รอให้ Firebase พร้อมก่อน (check ทุก 0.5 วิ)
+            // รอให้ Firebase พร้อม แล้วเริ่มดึงข้อมูล
             const checkDB = setInterval(() => {
                 if (window.db) {
                     clearInterval(checkDB);
@@ -446,8 +447,8 @@
 
         function initFirebaseListener() {
             try {
+                // ฟังข้อมูลจาก Cloud ตลอดเวลา (Real-time)
                 const { collection, onSnapshot } = window.firestore;
-                // ฟังข้อมูลจาก Cloud ตลอดเวลา
                 onSnapshot(collection(window.db, "news"), (snapshot) => {
                     state.allContent = [];
                     snapshot.forEach((doc) => {
@@ -461,16 +462,16 @@
                         return dateB.localeCompare(dateA);
                     });
 
-                    renderContent(state.currentCategory);
-                    console.log("Updated from Firebase:", state.allContent.length, "items");
+                    // อัปเดตหน้าจอทันที
+                    if(state.currentCategory === 'news') renderContent('news');
+                    renderAdminUI('news'); 
+                    console.log("Updated from Cloud:", state.allContent.length);
                 });
-            } catch (e) { console.error("Firebase Listener Error", e); }
+            } catch (e) { console.error("Listener Error", e); }
         }
 
-        // บันทึกข้อมูล (ส่งขึ้น Cloud)
-        async function saveDataToStorage() {
-            // ในระบบ Firebase เราบันทึกทีละชิ้นตอนกดปุ่ม Save ไม่ต้องบันทึกทั้งก้อนแบบ localStorage
-            // ฟังก์ชันนี้ปล่อยว่างไว้ หรือใช้บันทึก Setting เล็กๆ น้อยๆ ได้
+        function saveDataToStorage() {
+            // เหลือไว้แค่เก็บ Setting เล็กๆ น้อยๆ
             localStorage.setItem('systemSettings', JSON.stringify({
                 schoolName: state.schoolName,
                 idleTime: state.idleTimeoutConfig,
@@ -479,22 +480,20 @@
             }));
         }
 
-        // เพิ่มฟังก์ชันใหม่สำหรับบันทึกข่าว (ต้องไปแก้ปุ่ม Save ให้เรียกอันนี้)
+        // ฟังก์ชันส่งข้อมูลขึ้นฟ้า (ใช้แทนการ Save ลงเครื่อง)
         async function saveNewsToCloud(newsItem) {
             if(!window.db) return showToast("ยังไม่เชื่อมต่อ Database", "error");
             try {
                 const { collection, addDoc } = window.firestore;
-                // เพิ่ม Timestamp
-                newsItem.createdAt = new Date().toISOString();
-                
+                newsItem.createdAt = new Date().toISOString(); // เพิ่มเวลาที่สร้าง
                 await addDoc(collection(window.db, "news"), newsItem);
-                showToast("บันทึกขึ้น Cloud เรียบร้อย!", "success");
+                showToast("✅ บันทึกขึ้น Cloud เรียบร้อย!", "success");
             } catch(e) {
-                showToast("บันทึกไม่สำเร็จ: " + e.message, "error");
+                showToast("❌ บันทึกไม่สำเร็จ: " + e.message, "error");
             }
         }
         
-        // เพิ่มฟังก์ชันลบข่าว (Cloud)
+        // ฟังก์ชันลบข้อมูลบนฟ้า
         async function deleteNewsCloud(id) {
             if(!window.db) return;
             try {
@@ -1319,7 +1318,7 @@
             
             saveNewsToCloud(newItem); // เรียกฟังก์ชันใหม่ที่บันทึกขึ้น Cloud
             
-            renderAdminUI('news'); // Re-render table completely
+            //renderAdminUI('news'); // Re-render table completely
             
             document.getElementById('news-editor').classList.add('hidden');
             showToast("บันทึกข่าวเรียบร้อย", "success");
@@ -1331,22 +1330,15 @@
         }
 
         window.deleteNews = (index) => {
-            showConfirmModal(
-                'delete',
-                'ยืนยันการลบข่าว?',
-                'คุณต้องการลบข่าวนี้ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้',
-                () => {
-                    // ดึง ID ของข่าวจากลำดับที่เลือก
-                    const idToDelete = state.allContent[index].id;
-                    
-                    // สั่งลบข้อมูลบน Cloud (Database จริง)
-                    if (idToDelete) {
-                        deleteNewsCloud(idToDelete);
-                    } else {
-                        showToast("ไม่สามารถลบข่าวนอกระบบได้", "error");
-                    }
+            showConfirmModal('delete', 'ยืนยันการลบ?', 'ข้อมูลจะหายถาวร', () => {
+                // ดึง ID แล้วสั่งลบบน Cloud
+                const idToDelete = state.allContent[index].id;
+                if (idToDelete) {
+                    deleteNewsCloud(idToDelete);
+                } else {
+                    showToast("ไม่พบ ID ข่าว (อาจเป็นข้อมูลเก่า)", "error");
                 }
-            );
+            });
         }
         
         // --- App Launcher Functions ---
