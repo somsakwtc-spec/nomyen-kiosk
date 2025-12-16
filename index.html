@@ -5,6 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nong Nom Yen - ผู้ช่วยอาชีวะอัจฉริยะ</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- วาง Firebase Config ของคุณตรงนี้ ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRi7jzslkfpRlycAkN9zsoPqh-7kYTZ70",
+            authDomain: "nomyen-kiosk.firebaseapp.com",
+            projectId: "nomyen-kiosk",
+            storageBucket: "nomyen-kiosk.firebasestorage.app",
+            messagingSenderId: "151238657934",
+            appId: "1:151238657934:web:464af90757fe91c99006df",
+            measurementId: "G-79EFSHN0SS"
+            };
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            window.db = getFirestore(app);
+            window.firestore = { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, onSnapshot };
+            console.log("Firebase Connected");
+        } catch (e) { console.error("Firebase Error", e); }
+    </script>
+
+
+
+    
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -401,44 +428,80 @@
             schoolNameDisplay: document.getElementById('school-name-display')
         };
 
-        // --- Persistence Logic ---
-        function loadDataFromStorage() {
-            try {
-                const storedNews = localStorage.getItem('customNews');
-                if (storedNews) state.allContent = JSON.parse(storedNews);
-                
-                const storedSettings = localStorage.getItem('systemSettings');
-                if (storedSettings) {
-                    const settings = JSON.parse(storedSettings);
-                    state.schoolName = settings.schoolName || state.schoolName;
-                    state.idleTimeoutConfig = settings.idleTime || 60;
-                    state.isAutoGreet = settings.autoGreet || false;
-                    // โหลดข้อมูลติดต่อที่บันทึกไว้
-                    if (settings.contactInfo) state.contactInfo = settings.contactInfo;
 
-                    dom.schoolNameDisplay.innerText = state.schoolName;
-                    if(state.isAutoGreet) {
-                         const btn = document.getElementById('auto-greet-btn');
-                         const dot = document.getElementById('greet-status-dot');
-                         btn.classList.add('text-green-500', 'bg-green-100', 'dark:text-green-400', 'dark:bg-green-900/20');
-                         dot.classList.remove('hidden');
-                    }
+// ==========================================
+        // ส่วนที่ 3: ระบบบันทึกข้อมูลลง Firebase Cloud
+        // ==========================================
+        
+        // โหลดข้อมูล (เปลี่ยนเป็น Real-time)
+        function loadDataFromStorage() {
+            // รอให้ Firebase พร้อมก่อน (check ทุก 0.5 วิ)
+            const checkDB = setInterval(() => {
+                if (window.db) {
+                    clearInterval(checkDB);
+                    initFirebaseListener();
                 }
-            } catch(e) { console.error("Load Storage Error", e); }
+            }, 500);
         }
 
-        function saveDataToStorage() {
+        function initFirebaseListener() {
             try {
-                // Save only custom added news items to avoid overwriting mocks if we had them mixed
-                // For this demo, we save everything in allContent
-                localStorage.setItem('customNews', JSON.stringify(state.allContent));
-                localStorage.setItem('systemSettings', JSON.stringify({
-                    schoolName: state.schoolName,
-                    idleTime: state.idleTimeoutConfig,
-                    autoGreet: state.isAutoGreet,
-                    contactInfo: state.contactInfo // บันทึกข้อมูลติดต่อ
-                }));
-            } catch(e) { console.error("Save Storage Error", e); }
+                const { collection, onSnapshot } = window.firestore;
+                // ฟังข้อมูลจาก Cloud ตลอดเวลา
+                onSnapshot(collection(window.db, "news"), (snapshot) => {
+                    state.allContent = [];
+                    snapshot.forEach((doc) => {
+                        state.allContent.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    // เรียงลำดับ (เอาอันใหม่ขึ้นก่อน)
+                    state.allContent.sort((a, b) => {
+                        const dateA = a.createdAt || '';
+                        const dateB = b.createdAt || '';
+                        return dateB.localeCompare(dateA);
+                    });
+
+                    renderContent(state.currentCategory);
+                    console.log("Updated from Firebase:", state.allContent.length, "items");
+                });
+            } catch (e) { console.error("Firebase Listener Error", e); }
+        }
+
+        // บันทึกข้อมูล (ส่งขึ้น Cloud)
+        async function saveDataToStorage() {
+            // ในระบบ Firebase เราบันทึกทีละชิ้นตอนกดปุ่ม Save ไม่ต้องบันทึกทั้งก้อนแบบ localStorage
+            // ฟังก์ชันนี้ปล่อยว่างไว้ หรือใช้บันทึก Setting เล็กๆ น้อยๆ ได้
+            localStorage.setItem('systemSettings', JSON.stringify({
+                schoolName: state.schoolName,
+                idleTime: state.idleTimeoutConfig,
+                autoGreet: state.isAutoGreet,
+                contactInfo: state.contactInfo
+            }));
+        }
+
+        // เพิ่มฟังก์ชันใหม่สำหรับบันทึกข่าว (ต้องไปแก้ปุ่ม Save ให้เรียกอันนี้)
+        async function saveNewsToCloud(newsItem) {
+            if(!window.db) return showToast("ยังไม่เชื่อมต่อ Database", "error");
+            try {
+                const { collection, addDoc } = window.firestore;
+                // เพิ่ม Timestamp
+                newsItem.createdAt = new Date().toISOString();
+                
+                await addDoc(collection(window.db, "news"), newsItem);
+                showToast("บันทึกขึ้น Cloud เรียบร้อย!", "success");
+            } catch(e) {
+                showToast("บันทึกไม่สำเร็จ: " + e.message, "error");
+            }
+        }
+        
+        // เพิ่มฟังก์ชันลบข่าว (Cloud)
+        async function deleteNewsCloud(id) {
+            if(!window.db) return;
+            try {
+                const { doc, deleteDoc } = window.firestore;
+                await deleteDoc(doc(window.db, "news", id));
+                showToast("ลบข้อมูลเรียบร้อย", "success");
+            } catch(e) { showToast("ลบไม่สำเร็จ", "error"); }
         }
         // -------------------------
 
@@ -1254,9 +1317,7 @@
                 files: state.tempFiles
             };
             
-            // Add to beginning of list
-            state.allContent.unshift(newItem);
-            saveDataToStorage(); // Auto-save
+            saveNewsToCloud(newItem); // เรียกฟังก์ชันใหม่ที่บันทึกขึ้น Cloud
             
             renderAdminUI('news'); // Re-render table completely
             
@@ -1275,10 +1336,15 @@
                 'ยืนยันการลบข่าว?',
                 'คุณต้องการลบข่าวนี้ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้',
                 () => {
-                    state.allContent.splice(index, 1);
-                    saveDataToStorage();
-                    renderAdminUI('news');
-                    showToast("ลบข่าวเรียบร้อย", "success");
+                    // ดึง ID ของข่าวจากลำดับที่เลือก
+                    const idToDelete = state.allContent[index].id;
+                    
+                    // สั่งลบข้อมูลบน Cloud (Database จริง)
+                    if (idToDelete) {
+                        deleteNewsCloud(idToDelete);
+                    } else {
+                        showToast("ไม่สามารถลบข่าวนอกระบบได้", "error");
+                    }
                 }
             );
         }
@@ -1866,28 +1932,27 @@
             return items.map(i => ({ ...i, img: `https://placehold.co/600x400/1e293b/ffffff?text=${encodeURIComponent(i.category)}` }));
         }
 
-        async function callGemini(t, useSearch = false) {
-    try {
-        // เรียกไปที่ Backend ของเราเอง (ไฟล์ api/chat.js ที่เราสร้างไว้)
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: t })
-        });
-
-        const data = await response.json();
-        
-        if (data.text) {
-            return data.text;
-        } else {
-            console.error("API Error:", data);
-            return "ขออภัย ระบบขัดข้องชั่วคราว (Backend Error)";
+            async function callGemini(t, useSearch = false) {
+            try {
+                // เรียกไปที่ Backend Vercel ของเรา (ไฟล์ api/chat.js)
+                const response = await fetch('/api/chat', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: t })
+                });
+                const data = await response.json();
+                
+                if (data.text) {
+                    return data.text;
+                } else {
+                    console.error("API Error:", data);
+                    return "ระบบขัดข้องชั่วคราว (Backend Error)";
+                }
+            } catch (e) {
+                console.error("Fetch Error:", e);
+                return "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้";
+            }
         }
-    } catch (e) {
-        console.error("Fetch Error:", e);
-        return "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้";
-    }
-}
 
         window.summarizeContent = async (btn) => {
             const txt = document.getElementById('modal-desc').innerText;
